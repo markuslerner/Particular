@@ -25,8 +25,25 @@ h1 {
   margin-bottom: 0.5em;
 }
 
+h1 a {
+  text-decoration: none;
+}
+
 a {
-  color: #333;
+  color: #ddd;
+  transition: color 0.2s ease;
+}
+
+a:visited {
+  color: #aaa;
+}
+
+a:hover {
+  color: #fff;
+}
+
+a:focus-visible {
+  color: #fff;
 }
 
 ul {
