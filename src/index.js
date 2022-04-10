@@ -7,7 +7,7 @@ import { default as SeekRandom } from './behaviors/SeekRandom.js';
 import { default as Separate } from './behaviors/Separate.js';
 import { default as Wander } from './behaviors/Wander.js';
 
-import { default as MathUtils } from './math/MathUtils.js';
+import { default as Math2 } from './math/MathUtils.js';
 import { default as Quaternion } from './math/Quaternion.js';
 import { default as Vector3 } from './math/Vector3.js';
 import { default as VecUtils } from './math/VecUtils.js';
@@ -28,7 +28,7 @@ export {
   SeekRandom,
   Separate,
   Wander,
-  MathUtils,
+  Math2,
   Quaternion,
   Vector3,
   HashGrid,
