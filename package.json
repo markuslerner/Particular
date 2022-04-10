@@ -32,9 +32,6 @@
     "url": "https://github.com/markuslerner/Particular/issues"
   },
   "homepage": "https://github.com/markuslerner/Particular#readme",
-  "peerDependencies": {
-    "three": "^0.139.2"
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",

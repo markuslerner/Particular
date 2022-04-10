@@ -1,7 +1,7 @@
 // ported by markuslerner.com from punktiert Processing library:
 // https://github.com/djrkohler/punktiert/tree/master/src/punktiert/physics
 
-import { Vector3 } from 'three';
+import { Vector3 } from './index.js';
 import { constrainX, constrainY, constrainZ } from './VecUtils.js';
 
 /**
