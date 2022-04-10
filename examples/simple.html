@@ -80,6 +80,7 @@
     <script type="importmap">
       {
         "imports": {
+          "gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js",
           "three": "https://unpkg.com/three@0.139.2/build/three.module.js",
           "OrbitControls": "https://unpkg.com/three@0.139.2/examples/jsm/controls/OrbitControls.js"
         }
@@ -89,10 +90,31 @@
     <script type="module">
       import * as THREE from 'three';
       import { OrbitControls } from 'OrbitControls';
+      import { GUI } from 'gui';
 
-      import { Particle, PhysicsSimple, Wander } from '../src/index.js';
+      import {
+        Particle,
+        PhysicsSimple,
+        Collision,
+        Seek,
+        SeekRandom,
+        Wander,
+        Vector3,
+      } from '../src/index.js';
 
-      const physics = new PhysicsSimple({ friction: 0.98 });
+      const params = {
+        friction: 0.98,
+        collision: true,
+        seek: true,
+        seekRandom: false,
+        wander: true,
+        scaleMin: 5.0,
+        scaleMax: 5.0,
+      };
+
+      const physics = new PhysicsSimple({ friction: params.friction });
+
+      const scales = [];
 
       const stats = new Stats();
       stats.dom.style.left = 'auto';
@@ -100,6 +122,51 @@
       stats.dom.style.top = 'auto';
       stats.dom.style.bottom = '0';
       document.body.appendChild(stats.dom);
+
+      const gui = new GUI();
+
+      const addBehavior = (type) => {
+        if (params[type]) {
+          physics.particles.forEach((particle) => {
+            particle.addBehavior(particle.data[type]);
+          });
+        }
+
+        gui.add(params, type).onChange((v) => {
+          physics.particles.forEach((particle) => {
+            if (!particle.data[type]) return;
+            if (v) {
+              particle.addBehavior(particle.data[type]);
+            } else {
+              particle.removeBehavior(particle.data[type]);
+            }
+          });
+        });
+      };
+
+      gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
+        physics.friction = v;
+      });
+      gui.add(params, 'scaleMin', 0.01, 10.0).onChange((v) => {
+        for (let i = 0; i < scales.length; i++) {
+          scales[i] = random(v, params.scaleMax);
+        }
+        geometry.setAttribute(
+          'scale',
+          new THREE.Float32BufferAttribute(scales, 1)
+        );
+      });
+      gui.add(params, 'scaleMax', 0.01, 10.0).onChange((v) => {
+        for (let i = 0; i < scales.length; i++) {
+          scales[i] = random(params.scaleMin, v);
+        }
+        geometry.setAttribute(
+          'scale',
+          new THREE.Float32BufferAttribute(scales, 1)
+        );
+      });
+
+      gui.open();
 
       const renderer = new THREE.WebGLRenderer({
         alpha: true,
@@ -139,7 +206,7 @@
 
       const random = (min = 0, max = 1) => Math.random() * (max - min) + min;
 
-      const count = 1;
+      const count = 100;
       const range = 2;
 
       const vertices = [];
@@ -150,26 +217,50 @@
         const particle = new Particle(x, y, z, 1);
         physics.addParticle(particle);
 
-        console.log(particle);
+        particle.data = {};
 
-        const wander = new Wander({
+        particle.data.wander = new Wander({
           speed: 0.01,
           maxChange: 0.5,
           maxForce: 0.02,
         });
-        particle.addBehavior(wander);
+
+        particle.data.seek = new Seek({
+          target: new Vector3(),
+          maxSpeed: 0.02,
+          maxForce: 0.05,
+          slowDownDistance: 1.0,
+        });
+
+        particle.data.seekRandom = new SeekRandom({
+          maxSpeed: 0.1,
+          maxForce: 0.05,
+          min: new Vector3(-range, -range, -range),
+          max: new Vector3(range, range, range),
+          distanceMin: 0.01,
+          slowDownDistance: 0.0,
+        });
+
+        particle.data.collision = new Collision({
+          offset: 0.0,
+          maxForce: 0.02,
+        });
 
         vertices.push(x, y, z);
       }
+
+      addBehavior('collision');
+      addBehavior('seek');
+      addBehavior('seekRandom');
+      addBehavior('wander');
 
       geometry.setAttribute(
         'position',
         new THREE.Float32BufferAttribute(vertices, 3)
       );
 
-      const scales = [];
       for (let i = 0; i < count; i++) {
-        scales.push(random(1, 1));
+        scales.push(random(params.scaleMin, params.scaleMax));
       }
       geometry.setAttribute(
         'scale',
