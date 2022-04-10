@@ -95,9 +95,11 @@
       import {
         Particle,
         PhysicsSimple,
+        Avoid,
         Collision,
         Seek,
         SeekRandom,
+        Separate,
         Wander,
         Vector3,
       } from '../src/index.js';
@@ -105,16 +107,18 @@
       const random = (min = 0, max = 1) => Math.random() * (max - min) + min;
 
       const params = {
-        friction: 0.1,
+        friction: 0.98,
         collision: true,
+        avoid: true,
         seek: true,
         seekRandom: false,
+        separate: false,
         wander: false,
-        sizeMin: 0.01,
+        sizeMin: 0.5,
         sizeMax: 0.5,
       };
 
-      const count = 1000;
+      const count = 200;
       const range = 2;
 
       const physics = new PhysicsSimple({ friction: params.friction });
@@ -212,6 +216,8 @@
       //   'textures/sprites/disc.png'
       // );
 
+      const avoidTarget = new Vector3();
+
       const vertices = [];
       for (let i = 0; i < count; i++) {
         const x = random(-range, range);
@@ -222,16 +228,22 @@
 
         particle.data = {};
 
-        particle.data.wander = new Wander({
-          speed: 0.01,
-          maxChange: 0.5,
-          maxForce: 0.02,
+        particle.data.avoid = new Avoid({
+          target: avoidTarget,
+          maxSpeed: 0.05,
+          maxForce: 0.1,
+          maxDistance: 2.5,
+        });
+
+        particle.data.collision = new Collision({
+          offset: 0.0,
+          maxForce: 0.5,
         });
 
         particle.data.seek = new Seek({
           target: new Vector3(),
-          maxSpeed: 0.02,
-          maxForce: 0.01,
+          maxSpeed: 0.005,
+          maxForce: 0.005,
           slowDownDistance: 1.0,
         });
 
@@ -244,17 +256,26 @@
           slowDownDistance: 0.0,
         });
 
-        particle.data.collision = new Collision({
-          offset: 0.0,
-          maxForce: 0.1,
+        particle.data.separate = new Separate({
+          distance: 0.5,
+          maxSpeed: 0.02,
+          maxForce: 0.01,
+        });
+
+        particle.data.wander = new Wander({
+          speed: 0.01,
+          maxChange: 0.5,
+          maxForce: 0.02,
         });
 
         vertices.push(x, y, z);
       }
 
+      addBehavior('avoid');
       addBehavior('collision');
       addBehavior('seek');
       addBehavior('seekRandom');
+      addBehavior('separate');
       addBehavior('wander');
 
       geometry.setAttribute(
