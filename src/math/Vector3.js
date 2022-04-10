@@ -624,23 +624,23 @@ export default class Vector3 {
     return this;
   }
 
-  limit(length) {
+  limit(length = 1.0) {
     if (this.lengthSq() > length * length) {
       this.setLength(length);
     }
   }
 
-  constrainX(min, max) {
+  constrainX(min = 0.0, max = 0.0) {
     if (this.x < min) this.x = min;
     if (this.x > max) this.x = max;
   }
 
-  constrainY(min, max) {
+  constrainY(min = 0.0, max = 0.0) {
     if (this.y < min) this.y = min;
     if (this.y > max) this.y = max;
   }
 
-  constrainZ(min, max) {
+  constrainZ(min = 0.0, max = 0.0) {
     if (this.z < min) this.z = min;
     if (this.z > max) this.z = max;
   }
