@@ -1,0 +1,47 @@
+{
+  "name": "particular",
+  "version": "0.1.0",
+  "description": "Particle system for JavaScript",
+  "type": "module",
+  "types": "./build/index.d.ts",
+  "module": "./build/particular.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && esbuild src/index.ts --bundle --minify --format=esm --sourcemap --external:three --outfile=build/three.interactive.js",
+    "lint": "eslint src/** --ext .js,.ts",
+    "examples": "ws"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markuslerner/Particular.git"
+  },
+  "keywords": [
+    "particle",
+    "system",
+    "javascript"
+  ],
+  "files": [
+    "LICENSE",
+    "README.md",
+    "build",
+    "src"
+  ],
+  "author": "Markus Lerner <m@markuslerner.com> (https://www.markuslerner.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markuslerner/Particular/issues"
+  },
+  "homepage": "https://github.com/markuslerner/Particular#readme",
+  "peerDependencies": {
+    "three": "^0.139.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "esbuild": "^0.14.23",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.4.0",
+    "local-web-server": "^5.1.1",
+    "typescript": "^4.5.5"
+  }
+}
