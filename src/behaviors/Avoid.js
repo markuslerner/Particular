@@ -1,5 +1,5 @@
 import Vector3 from '../math/Vector3.js';
-import { limit } from '../VecUtils.js';
+import { limit } from '../math/VecUtils.js';
 
 export default class Avoid {
   constructor({

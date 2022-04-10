@@ -10,12 +10,12 @@ import { default as Wander } from './behaviors/Wander.js';
 import { default as MathUtils } from './math/MathUtils.js';
 import { default as Quaternion } from './math/Quaternion.js';
 import { default as Vector3 } from './math/Vector3.js';
+import { default as VecUtils } from './math/VecUtils.js';
 
 import { default as HashGrid } from './HashGrid.js';
 import { default as Particle } from './Particle.js';
 import { default as Physics } from './Physics.js';
 import { default as PhysicsSimple } from './PhysicsSimple.js';
-import { default as VecUtils } from './VecUtils.js';
 
 // import { default as WorldBox } from './WorldBox.js'
 

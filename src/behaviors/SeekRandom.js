@@ -1,6 +1,6 @@
 import Vector3 from '../math/Vector3.js';
 import Math2 from '../math/MathUtils.js';
-import { limit } from '../VecUtils.js';
+import { limit } from '../math/VecUtils.js';
 
 // Based on Seek, automatically creates new random target within min and max (box space)
 

@@ -2,7 +2,7 @@
 // https://github.com/djrkohler/punktiert/tree/master/src/punktiert/physics
 
 import { Vector3 } from './index.js';
-import { constrainX, constrainY, constrainZ } from './VecUtils.js';
+import { constrainX, constrainY, constrainZ } from './math/VecUtils.js';
 
 /**
  * An individual 3D particle for use by the VPhysics and VSpring classes. the functionality can be extended by applying different behaviors </p> this class is
