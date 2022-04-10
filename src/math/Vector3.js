@@ -624,6 +624,27 @@ export default class Vector3 {
     return this;
   }
 
+  limit(length) {
+    if (this.lengthSq() > length * length) {
+      this.setLength(length);
+    }
+  }
+
+  constrainX(min, max) {
+    if (this.x < min) this.x = min;
+    if (this.x > max) this.x = max;
+  }
+
+  constrainY(min, max) {
+    if (this.y < min) this.y = min;
+    if (this.y > max) this.y = max;
+  }
+
+  constrainZ(min, max) {
+    if (this.z < min) this.z = min;
+    if (this.z > max) this.z = max;
+  }
+
   *[Symbol.iterator]() {
     yield this.x;
     yield this.y;
