@@ -108,14 +108,15 @@
 
       const params = {
         friction: 0.98,
+        sizeMin: 0.5,
+        sizeMax: 0.5,
+        constrainZ: false,
         collision: true,
         avoid: true,
         seek: true,
         seekRandom: false,
         separate: false,
         wander: false,
-        sizeMin: 0.5,
-        sizeMax: 0.5,
       };
 
       const count = 200;
@@ -176,6 +177,13 @@
       });
       gui.add(params, 'sizeMax', 0.01, 10.0).onChange((v) => {
         updateSizes();
+      });
+      gui.add(params, 'constrainZ').onChange((v) => {
+        if (!v) {
+          physics.particles.forEach((particle) => {
+            particle.z = random(-0.01, 0.01);
+          });
+        }
       });
 
       gui.open();
@@ -324,8 +332,11 @@
         physics.update();
 
         let i = 0;
+
         physics.particles.forEach((particle) => {
-          particle.constrainZ(); // Keep on a plane
+          if (params.constrainZ) {
+            particle.constrainZ(); // Keep on a plane
+          }
 
           vertices[i] = particle.x;
           vertices[i + 1] = particle.y;
