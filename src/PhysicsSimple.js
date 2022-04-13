@@ -11,11 +11,11 @@
  */
 export default class PhysicsSimple {
   constructor({ friction = 0.95, numIterations = 50 }) {
-    this.particles = new Set();
-    this.springs = null;
-    this.constraints = new Set();
-    this.groups = null;
     this.behaviors = new Set();
+    this.constraints = new Set();
+    this.groups = new Set();
+    this.particles = new Set();
+    this.springs = new Set();
 
     this.friction = friction;
     this.numIterations = numIterations;
@@ -47,9 +47,6 @@ export default class PhysicsSimple {
    * @return itself
    */
   addSpring(s) {
-    if (this.springs === null) {
-      this.springs = new Set();
-    }
     if (this.getSpring(s.a, s.b) === null) {
       this.springs.add(s);
     }
@@ -69,10 +66,7 @@ export default class PhysicsSimple {
    *            VParticleGroup
    */
   addGroup(g) {
-    if (this.groups === null) {
-      this.groups = new Set();
-    }
-    this.groups.add(g);
+    return this.groups.add(g);
   }
 
   clear() {
@@ -81,24 +75,8 @@ export default class PhysicsSimple {
     return this;
   }
 
-  getParticleByIndex(index) {
-    return this.returnIfConstrainedByIndex(index);
-  }
-
   getParticle(particle) {
     return this.returnIfConstrained(particle);
-  }
-
-  getfriction() {
-    return this.friction;
-  }
-
-  getNumIterations() {
-    return this.numIterations;
-  }
-
-  getParticles() {
-    return new Set(this.particles);
   }
 
   /**
@@ -122,14 +100,14 @@ export default class PhysicsSimple {
   /**
    * get the count of how many springs are connected to A
    *
-   * @param a
+   * @param spring
    *            particle 1
    */
-  getnumConnected(a) {
+  getnumConnected(spring) {
     let count = 0;
     if (this.springs != null) {
       this.springs.forEach((s) => {
-        if (s.a === a || s.b === a) {
+        if (s.a === spring || s.b === spring) {
           count++;
         }
       });
@@ -137,59 +115,71 @@ export default class PhysicsSimple {
     return count;
   }
 
+  hasBehavior(behavior) {
+    return this.behaviors.has(behavior);
+  }
+
+  hasConstraint(constraint) {
+    return this.constraints.has(constraint);
+  }
+
+  hasGroup(group) {
+    return this.groups.has(group);
+  }
+
+  hasParticle(particle) {
+    return this.particles.has(particle);
+  }
+
+  hasSpring(spring) {
+    return this.springs.has(spring);
+  }
+
   /**
    * Removes a behavior from the simulation.
    *
-   * @param b
+   * @param behavior
    *            behavior to remove
    * @return true, if removed successfully
    */
   removeBehavior(behavior) {
-    const found = this.behaviors.has(behavior);
-    this.behaviors.delete(behavior);
-    return found;
+    return this.behaviors.delete(behavior);
   }
 
   /**
    * Removes a constraint from the simulation.
    */
   removeConstraint(constraint) {
-    const found = this.constraints.has(constraint);
-    this.constraints.delete(constraint);
-    return found;
+    return this.constraints.delete(constraint);
   }
 
   /**
    * Removes a particle from the simulation.
    *
-   * @param p
+   * @param particle
    *            particle to remove
    * @return true, if removed successfully
    */
   removeParticle(particle) {
-    const found = this.particles.has(particle);
-    this.particles.delete(particle);
-    return found;
+    return this.particles.delete(particle);
   }
 
   /**
    * Removes a spring connector from the simulation instance.
    *
-   * @param s
+   * @param spring
    *            spring to remove
    * @return true, if the spring has been removed
    */
   removeSpring(spring) {
-    const found = this.springs.has(spring);
-    this.springs.delete(spring);
-    return found;
+    return this.springs.delete(spring);
   }
 
   /**
    * Removes a spring connector and its both end point particles from the
    * simulation
    *
-   * @param s
+   * @param spring
    *            spring to remove
    * @return true, only if spring AND particles have been removed successfully
    */
@@ -203,26 +193,12 @@ export default class PhysicsSimple {
   /**
    * Removes a particle group from the simulation instance.
    *
-   * @param g
+   * @param group
    *            to remove
    * @return true, if the spring has been removed
    */
   removeGroup(group) {
-    const found = this.groups.has(group);
-    this.groups.delete(group);
-    return found;
-  }
-
-  setFriction(friction) {
-    this.friction = friction;
-  }
-
-  /**
-   * @param numIterations
-   *            the numIterations to set
-   */
-  setNumIterations(numIterations) {
-    this.numIterations = numIterations;
+    return this.groups.delete(group);
   }
 
   /**
@@ -286,29 +262,16 @@ export default class PhysicsSimple {
       }
     });
 
-    return this.returnIfDouble(particle);
+    return this.returnIfDuplicate(particle);
   }
 
-  // returnIfConstrainedByIndex(index) {
-  //   VParticle p = particles.get(index);
-  //   for (int i = 0; i < constraints.size(); i++) {
-  //     VParticle other = (VParticle) constraints.get(i);
-  //     if (p.equalsWithTolerance(other, .1f)) {
-  //       return other;
-  //     }
-  //   }
-  //   return p;
-  // }
-
-  returnIfDouble(particle) {
+  returnIfDuplicate(particle) {
     this.particles.forEach((particle2) => {
-      if (particle.equals(particle2)) {
+      if (particle === particle2) {
         return particle2;
       }
     });
     this.particles.add(particle);
     return particle;
   }
-
-  // end class
 }
