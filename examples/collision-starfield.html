@@ -104,7 +104,7 @@
         Vector3,
       } from '../src/index.js';
 
-      const random = (min = 0, max = 1) => Math.random() * (max - min) + min;
+      import { random } from './utils/index.js';
 
       const behaviors = ['collision', 'seek', 'seekRandom', 'wander'];
 
