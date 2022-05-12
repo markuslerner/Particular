@@ -106,8 +106,11 @@
 
       const random = (min = 0, max = 1) => Math.random() * (max - min) + min;
 
+      const behaviors = ['collision', 'seek', 'seekRandom', 'wander'];
+
       const params = {
         friction: 0.1,
+        count: 1000,
         sizeMin: 0.01,
         sizeMax: 0.5,
         radiusFactor: 1.0,
@@ -117,12 +120,12 @@
         wander: false,
       };
 
-      const count = 1000;
       const range = 2;
 
       const physics = new PhysicsSimple({ friction: params.friction });
 
-      const scales = [];
+      let scales = [];
+      let vertices = [];
 
       const stats = new Stats();
       stats.dom.style.left = 'auto';
@@ -141,6 +144,7 @@
             offset: 0.0,
             maxForce: 0.1,
           });
+          particle.addBehavior(particle.data.collision);
 
           particle.data.seek = new Seek({
             target: new Vector3(),
@@ -148,6 +152,7 @@
             maxForce: 0.01,
             slowDownDistance: 1.0,
           });
+          particle.addBehavior(particle.data.seek);
 
           particle.data.seekRandom = new SeekRandom({
             maxSpeed: 0.1,
@@ -157,32 +162,52 @@
             distanceMin: 0.01,
             slowDownDistance: 0.0,
           });
+          particle.addBehavior(particle.data.seekRandom);
 
           particle.data.wander = new Wander({
             speed: 0.01,
             maxChange: 0.5,
             maxForce: 0.02,
           });
+          particle.addBehavior(particle.data.wander);
         }
       };
 
       const initBehavior = (type) => {
-        if (params[type]) {
-          physics.particles.forEach((particle) => {
-            particle.addBehavior(particle.data[type]);
-          });
+        gui.add(params, type).onChange((v) => {
+          enableDisableBehavior(type);
+        });
+      };
+
+      const enableDisableBehavior = (type) => {
+        physics.particles.forEach((particle) => {
+          if (!particle.data[type]) return;
+          particle.data[type].enabled = params[type];
+        });
+      };
+
+      const createParticles = () => {
+        vertices = [];
+        scales = [];
+        physics.clear();
+
+        for (let i = 0; i < params.count; i++) {
+          const x = random(-range, range);
+          const y = random(-range, range);
+          const z = random(-range, range);
+
+          vertices.push(x, y, z);
+
+          const particle = new Particle(x, y, z);
+          physics.addParticle(particle);
+          createBehaviors(particle);
         }
 
-        gui.add(params, type).onChange((v) => {
-          physics.particles.forEach((particle) => {
-            if (!particle.data[type]) return;
-            if (v) {
-              particle.addBehavior(particle.data[type]);
-            } else {
-              particle.removeBehavior(particle.data[type]);
-            }
-          });
+        behaviors.forEach((behavior) => {
+          enableDisableBehavior(behavior);
         });
+
+        updateSizes();
       };
 
       const updateSizes = () => {
@@ -202,6 +227,9 @@
 
       gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
         physics.friction = v;
+      });
+      gui.add(params, 'count', 0, 2000).onChange((v) => {
+        createParticles();
       });
       gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {
         updateSizes();
@@ -251,30 +279,11 @@
       //   'textures/sprites/disc.png'
       // );
 
-      const vertices = [];
-      for (let i = 0; i < count; i++) {
-        const x = random(-range, range);
-        const y = random(-range, range);
-        const z = random(-range, range);
-        const particle = new Particle(x, y, z);
-        physics.addParticle(particle);
+      behaviors.forEach((behavior) => {
+        initBehavior(behavior);
+      });
 
-        createBehaviors(particle);
-
-        vertices.push(x, y, z);
-      }
-
-      updateSizes();
-
-      initBehavior('collision');
-      initBehavior('seek');
-      initBehavior('seekRandom');
-      initBehavior('wander');
-
-      geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(vertices, 3)
-      );
+      createParticles();
 
       // const material = new THREE.PointsMaterial({
       //   size: 10,

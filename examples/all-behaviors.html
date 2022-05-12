@@ -106,11 +106,21 @@
 
       const random = (min = 0, max = 1) => Math.random() * (max - min) + min;
 
+      const behaviors = [
+        'avoid',
+        'collision',
+        'seek',
+        'seekRandom',
+        'separate',
+        'wander',
+      ];
+
       const params = {
         friction: 0.98,
+        count: 100,
         sizeMin: 0.5,
         sizeMax: 0.5,
-        radiusFactor: 3.0,
+        radiusFactor: 1.0,
         constrainZ: false,
         collision: true,
         avoid: false,
@@ -121,12 +131,12 @@
         slowDownDistance: 0.0,
       };
 
-      const count = 50;
       const range = 2;
 
       const physics = new PhysicsSimple({ friction: params.friction });
 
-      const scales = [];
+      let scales = [];
+      let vertices = [];
 
       const stats = new Stats();
       stats.dom.style.left = 'auto';
@@ -137,23 +147,93 @@
 
       const gui = new GUI();
 
-      const initBehavior = (type) => {
-        if (params[type]) {
-          physics.particles.forEach((particle) => {
-            particle.addBehavior(particle.data[type]);
+      const createBehaviors = (particle) => {
+        if (!particle.data) {
+          particle.data = {};
+
+          particle.data.avoid = new Avoid({
+            target: avoidTarget,
+            maxForce: 0.1,
+            maxSpeed: 0.05,
+            maxDistance: 2.5,
           });
+          particle.addBehavior(particle.data.avoid);
+
+          particle.data.collision = new Collision({
+            offset: 0.0,
+            maxForce: 0.5,
+          });
+          particle.addBehavior(particle.data.collision);
+
+          particle.data.seek = new Seek({
+            target: new Vector3(),
+            maxForce: 0.1,
+            maxSpeed: 0.05,
+            slowDownDistance: 0.0,
+          });
+          particle.addBehavior(particle.data.seek);
+
+          particle.data.seekRandom = new SeekRandom({
+            maxSpeed: 0.1,
+            maxForce: 0.05,
+            min: new Vector3(-range, -range, -range),
+            max: new Vector3(range, range, range),
+            distanceMin: 0.01,
+            slowDownDistance: 0.0,
+          });
+          particle.addBehavior(particle.data.seekRandom);
+
+          particle.data.separate = new Separate({
+            distance: 0.5,
+            maxSpeed: 0.02,
+            maxForce: 0.01,
+          });
+          particle.addBehavior(particle.data.separate);
+
+          particle.data.wander = new Wander({
+            speed: 0.01,
+            maxChange: 0.5,
+            maxForce: 0.02,
+          });
+          particle.addBehavior(particle.data.wander);
+        }
+      };
+
+      const initBehavior = (type) => {
+        gui.add(params, type).onChange((v) => {
+          enableDisableBehavior(type);
+        });
+      };
+
+      const enableDisableBehavior = (type) => {
+        physics.particles.forEach((particle) => {
+          if (!particle.data[type]) return;
+          particle.data[type].enabled = params[type];
+        });
+      };
+
+      const createParticles = () => {
+        vertices = [];
+        scales = [];
+        physics.clear();
+
+        for (let i = 0; i < params.count; i++) {
+          const x = random(-range, range);
+          const y = random(-range, range);
+          const z = random(-range, range);
+
+          vertices.push(x, y, z);
+
+          const particle = new Particle(x, y, z);
+          physics.addParticle(particle);
+          createBehaviors(particle);
         }
 
-        gui.add(params, type).onChange((v) => {
-          physics.particles.forEach((particle) => {
-            if (!particle.data[type]) return;
-            if (v) {
-              particle.addBehavior(particle.data[type]);
-            } else {
-              particle.removeBehavior(particle.data[type]);
-            }
-          });
+        behaviors.forEach((behavior) => {
+          enableDisableBehavior(behavior);
         });
+
+        updateSizes();
       };
 
       const updateSizes = () => {
@@ -173,6 +253,9 @@
 
       gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
         physics.friction = v;
+      });
+      gui.add(params, 'count', 0, 5000).onChange((v) => {
+        createParticles();
       });
       gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {
         updateSizes();
@@ -237,72 +320,11 @@
 
       const avoidTarget = new Vector3();
 
-      const vertices = [];
-      for (let i = 0; i < count; i++) {
-        const x = random(-range, range);
-        const y = random(-range, range);
-        const z = random(-range, range);
-        const particle = new Particle(x, y, z);
-        physics.addParticle(particle);
+      behaviors.forEach((behavior) => {
+        initBehavior(behavior);
+      });
 
-        particle.data = {};
-
-        particle.data.avoid = new Avoid({
-          target: avoidTarget,
-          maxForce: 0.1,
-          maxSpeed: 0.05,
-          maxDistance: 2.5,
-        });
-
-        particle.data.collision = new Collision({
-          offset: 0.0,
-          maxForce: 0.5,
-        });
-
-        particle.data.seek = new Seek({
-          target: new Vector3(),
-          maxForce: 0.1,
-          maxSpeed: 0.05,
-          slowDownDistance: 0.0,
-        });
-
-        particle.data.seekRandom = new SeekRandom({
-          maxSpeed: 0.1,
-          maxForce: 0.05,
-          min: new Vector3(-range, -range, -range),
-          max: new Vector3(range, range, range),
-          distanceMin: 0.01,
-          slowDownDistance: 0.0,
-        });
-
-        particle.data.separate = new Separate({
-          distance: 0.5,
-          maxSpeed: 0.02,
-          maxForce: 0.01,
-        });
-
-        particle.data.wander = new Wander({
-          speed: 0.01,
-          maxChange: 0.5,
-          maxForce: 0.02,
-        });
-
-        vertices.push(x, y, z);
-      }
-
-      updateSizes();
-
-      initBehavior('avoid');
-      initBehavior('collision');
-      initBehavior('seek');
-      initBehavior('seekRandom');
-      initBehavior('separate');
-      initBehavior('wander');
-
-      geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(vertices, 3)
-      );
+      createParticles();
 
       // const material = new THREE.PointsMaterial({
       //   size: 10,
