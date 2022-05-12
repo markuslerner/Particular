@@ -18,12 +18,14 @@ export default class Seek {
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.slowDownDistance = slowDownDistance;
+    this.enabled = true;
   }
 
   apply(particle) {
-    const f = this.seek(particle);
-
-    particle.addForce(f);
+    if (this.enabled) {
+      const f = this.seek(particle);
+      particle.addForce(f);
+    }
   }
 
   seek(particle) {

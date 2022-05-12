@@ -15,12 +15,14 @@ export default class Align {
     this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
+    this.enabled = true;
   }
 
   apply(particle) {
-    const f = this.align(particle);
-
-    particle.addForce(f);
+    if (this.enabled) {
+      const f = this.align(particle);
+      particle.addForce(f);
+    }
   }
 
   align(particle) {

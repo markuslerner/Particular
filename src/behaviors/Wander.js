@@ -11,12 +11,14 @@ export default class Wander {
 
     this.wanderVelocity = new Vector3();
     this.wanderDirection = new Vector3();
+    this.enabled = true;
   }
 
   apply(particle) {
-    const f = this.wander(particle);
-
-    particle.addForce(f);
+    if (this.enabled) {
+      const f = this.wander(particle);
+      particle.addForce(f);
+    }
   }
 
   wander(particle) {

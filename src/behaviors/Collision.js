@@ -19,38 +19,41 @@ export default class Collision {
   constructor({ offset = 0.0, maxForce = 0.2 }) {
     this.offset = offset;
     this.maxForce = maxForce;
+    this.enabled = true;
   }
 
   apply(particle) {
-    const sum = new Vector3();
-    let count = 1;
-    const radius =
-      this.offset === 0.0
-        ? particle.getRadius()
-        : particle.getRadius() * (1.0 - this.offset);
+    if (this.enabled) {
+      const sum = new Vector3();
+      let count = 1;
+      const radius =
+        this.offset === 0.0
+          ? particle.getRadius()
+          : particle.getRadius() * (1.0 - this.offset);
 
-    particle.neighbors.forEach((neighbor) => {
-      if (neighbor !== particle && !neighbor.noCollision) {
-        delta.copy(particle);
-        delta.sub(neighbor);
+      particle.neighbors.forEach((neighbor) => {
+        if (neighbor !== particle && !neighbor.noCollision) {
+          delta.copy(particle);
+          delta.sub(neighbor);
 
-        const dist = delta.length();
+          const dist = delta.length();
 
-        const r = radius + neighbor.getRadius();
+          const r = radius + neighbor.getRadius();
 
-        if (dist < r) {
-          const force = delta.setLength((r - dist) / r); // multiplyScalar
+          if (dist < r) {
+            const force = delta.setLength((r - dist) / r); // multiplyScalar
 
-          sum.add(force);
-          count++;
+            sum.add(force);
+            count++;
+          }
         }
-      }
-    });
+      });
 
-    sum.multiplyScalar(1.0 / count);
-    limit(sum, this.maxForce);
+      sum.multiplyScalar(1.0 / count);
+      limit(sum, this.maxForce);
 
-    particle.addForce(sum);
+      particle.addForce(sum);
+    }
   }
 
   getLimit() {

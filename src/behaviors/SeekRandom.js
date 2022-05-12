@@ -19,14 +19,16 @@ export default class SeekRandom {
     this.max = max;
     this.distanceMin = distanceMin < maxForce ? maxForce : distanceMin;
     this.slowDownDistance = slowDownDistance;
+    this.enabled = true;
 
     this.setRandomTarget();
   }
 
   apply(particle) {
-    const f = this.seek(particle);
-
-    particle.addForce(f);
+    if (this.enabled) {
+      const f = this.seek(particle);
+      particle.addForce(f);
+    }
   }
 
   setMin(min) {

@@ -13,12 +13,14 @@ export default class Avoid {
     this.maxForce = maxForce;
 
     this.maxDistance = maxDistance;
+    this.enabled = true;
   }
 
   apply(particle) {
-    const f = this.seek(particle);
-
-    particle.addForce(f);
+    if (this.enabled) {
+      const f = this.seek(particle);
+      particle.addForce(f);
+    }
   }
 
   seek(particle) {
