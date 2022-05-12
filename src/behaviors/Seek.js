@@ -12,11 +12,13 @@ export default class Seek {
     target = new Vector3(),
     maxSpeed = 3.5,
     maxForce = 0.5,
+    minDistance = 0.0,
     slowDownDistance = 100.0,
   }) {
     this.target = target;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
+    this.minDistance = minDistance;
     this.slowDownDistance = slowDownDistance;
     this.enabled = true;
   }
@@ -33,9 +35,12 @@ export default class Seek {
     desired.sub(particle);
     const distance = desired.length();
 
-    if (distance > 0) {
-      if (distance < this.slowDownDistance) {
-        desired.setLength(this.maxSpeed * (distance / this.slowDownDistance));
+    if (distance > this.minDistance) {
+      if (distance < this.minDistance + this.slowDownDistance) {
+        desired.setLength(
+          this.maxSpeed *
+            ((distance - this.minDistance) / this.slowDownDistance)
+        );
       } else {
         desired.setLength(this.maxSpeed);
       }
