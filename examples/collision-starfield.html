@@ -338,14 +338,16 @@
 
       animate();
 
-      window.addEventListener('resize', handleWindowResize, false);
+      window.addEventListener(
+        'resize',
+        () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
 
-      function handleWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        },
+        false
+      );
     </script>
   </body>
 </html>
