@@ -108,12 +108,13 @@
 
       const params = {
         friction: 0.1,
+        sizeMin: 0.01,
+        sizeMax: 0.5,
+        radiusFactor: 1.0,
         collision: true,
         seek: true,
         seekRandom: false,
         wander: false,
-        sizeMin: 0.01,
-        sizeMax: 0.5,
       };
 
       const count = 1000;
@@ -132,7 +133,40 @@
 
       const gui = new GUI();
 
-      const addBehavior = (type) => {
+      const createBehaviors = (particle) => {
+        if (!particle.data) {
+          particle.data = {};
+
+          particle.data.collision = new Collision({
+            offset: 0.0,
+            maxForce: 0.1,
+          });
+
+          particle.data.seek = new Seek({
+            target: new Vector3(),
+            maxSpeed: 0.02,
+            maxForce: 0.01,
+            slowDownDistance: 1.0,
+          });
+
+          particle.data.seekRandom = new SeekRandom({
+            maxSpeed: 0.1,
+            maxForce: 0.05,
+            min: new Vector3(-range, -range, -range),
+            max: new Vector3(range, range, range),
+            distanceMin: 0.01,
+            slowDownDistance: 0.0,
+          });
+
+          particle.data.wander = new Wander({
+            speed: 0.01,
+            maxChange: 0.5,
+            maxForce: 0.02,
+          });
+        }
+      };
+
+      const initBehavior = (type) => {
         if (params[type]) {
           physics.particles.forEach((particle) => {
             particle.addBehavior(particle.data[type]);
@@ -155,8 +189,8 @@
         let i = 0;
         physics.particles.forEach((particle) => {
           const scale = random(params.sizeMin, params.sizeMax);
-          particle.radius = scale / 2;
           scales[i] = scale;
+          particle.radius = (scale / 2) * params.radiusFactor;
           i++;
         });
 
@@ -173,6 +207,9 @@
         updateSizes();
       });
       gui.add(params, 'sizeMax', 0.01, 10.0).onChange((v) => {
+        updateSizes();
+      });
+      gui.add(params, 'radiusFactor', 0.0, 10.0).onChange((v) => {
         updateSizes();
       });
 
@@ -222,57 +259,21 @@
         const particle = new Particle(x, y, z);
         physics.addParticle(particle);
 
-        particle.data = {};
-
-        particle.data.wander = new Wander({
-          speed: 0.01,
-          maxChange: 0.5,
-          maxForce: 0.02,
-        });
-
-        particle.data.seek = new Seek({
-          target: new Vector3(),
-          maxSpeed: 0.02,
-          maxForce: 0.01,
-          slowDownDistance: 1.0,
-        });
-
-        particle.data.seekRandom = new SeekRandom({
-          maxSpeed: 0.1,
-          maxForce: 0.05,
-          min: new Vector3(-range, -range, -range),
-          max: new Vector3(range, range, range),
-          distanceMin: 0.01,
-          slowDownDistance: 0.0,
-        });
-
-        particle.data.collision = new Collision({
-          offset: 0.0,
-          maxForce: 0.1,
-        });
+        createBehaviors(particle);
 
         vertices.push(x, y, z);
       }
 
-      addBehavior('collision');
-      addBehavior('seek');
-      addBehavior('seekRandom');
-      addBehavior('wander');
+      updateSizes();
+
+      initBehavior('collision');
+      initBehavior('seek');
+      initBehavior('seekRandom');
+      initBehavior('wander');
 
       geometry.setAttribute(
         'position',
         new THREE.Float32BufferAttribute(vertices, 3)
-      );
-
-      physics.particles.forEach((particle, i) => {
-        const scale = random(params.sizeMin, params.sizeMax);
-        particle.radius = scale / 2;
-        scales.push(scale);
-      });
-
-      geometry.setAttribute(
-        'scale',
-        new THREE.Float32BufferAttribute(scales, 1)
       );
 
       // const material = new THREE.PointsMaterial({
