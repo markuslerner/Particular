@@ -123,10 +123,13 @@
         radiusFactor: 1.0,
         constrainZ: false,
         collision: true,
-        avoid: false,
-        avoidMouse: false,
+        collisionMaxForce: 2.0,
+        avoid: true,
+        avoidMouse: true,
+        avoidMaxForce: 2.0,
+        avoidMaxSpeed: 1.0,
         seek: true,
-        seekMouse: true,
+        seekMouse: false,
         seekMaxForce: 2.0,
         seekMaxSpeed: 1.0,
         seekRandom: false,
@@ -163,15 +166,15 @@
 
           particle.data.avoid = new Avoid({
             target: params.avoidMouse ? mousePosition : avoidTarget,
-            maxForce: 0.1,
-            maxSpeed: 0.05,
+            maxForce: params.avoidMaxForce,
+            maxSpeed: params.avoidMaxSpeed,
             maxDistance: 2.5,
           });
           particle.addBehavior(particle.data.avoid);
 
           particle.data.collision = new Collision({
             offset: 0.0,
-            maxForce: 0.5,
+            maxForce: params.collisionMaxForce,
           });
           particle.addBehavior(particle.data.collision);
 
@@ -184,8 +187,8 @@
           particle.addBehavior(particle.data.seek);
 
           particle.data.seekRandom = new SeekRandom({
-            maxForce: params.seekMaxForce,
-            maxSpeed: params.seekMaxSpeed,
+            maxForce: 0.1,
+            maxSpeed: 0.1,
             min: new Vector3(-range, -range, -range),
             max: new Vector3(range, range, range),
             distanceMin: 0.01,
@@ -210,9 +213,56 @@
       };
 
       const initBehavior = (type) => {
-        gui.add(params, type).onChange((v) => {
-          enableDisableBehavior(type);
-        });
+        const folder = gui.addFolder(type);
+
+        folder
+          .add(params, type)
+          .name('enabled')
+          .onChange((v) => {
+            enableDisableBehavior(type);
+          });
+
+        if (type === 'avoid') {
+          folder.add(params, 'avoidMouse').onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.avoid.target = v ? mousePosition : avoidTarget;
+            });
+          });
+          folder.add(params, 'avoidMaxForce', 0, 5).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.avoid.maxForce = v;
+            });
+          });
+          folder.add(params, 'avoidMaxSpeed', 0, 5).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.avoid.maxSpeed = v;
+            });
+          });
+        } else if (type === 'collision') {
+          folder.add(params, 'collisionMaxForce', 0, 5).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.collision.maxForce = v;
+            });
+          });
+        } else if (type === 'seek') {
+          folder.add(params, 'seekMouse').onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.target = v ? mousePosition : seekTarget;
+            });
+          });
+          folder.add(params, 'seekMaxForce', 0, 5).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.maxForce = v;
+            });
+          });
+          folder.add(params, 'seekMaxSpeed', 0, 5).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.maxSpeed = v;
+            });
+          });
+        }
+
+        folder.open();
       };
 
       const enableDisableBehavior = (type) => {
@@ -279,37 +329,14 @@
       gui.add(params, 'slowDownDistance', 0.0, 10.0).onChange((v) => {
         physics.particles.forEach((particle) => {
           particle.data.seek.slowDownDistance = v;
-          particle.data.seekRandom.slowDownDistance = v;
         });
       });
       gui.add(params, 'constrainZ').onChange((v) => {
         if (!v) {
           physics.particles.forEach((particle) => {
-            particle.z = random(-0.01, 0.01);
+            particle.z = random(0.01, 0.01);
           });
         }
-      });
-      gui.add(params, 'avoidMouse').onChange((v) => {
-        physics.particles.forEach((particle) => {
-          particle.data.avoid.target = v ? mousePosition : avoidTarget;
-        });
-      });
-      gui.add(params, 'seekMouse').onChange((v) => {
-        physics.particles.forEach((particle) => {
-          particle.data.seek.target = v ? mousePosition : seekTarget;
-        });
-      });
-      gui.add(params, 'seekMaxForce', 0, 5).onChange((v) => {
-        physics.particles.forEach((particle) => {
-          particle.data.seek.maxForce = v;
-          particle.data.seekRandom.maxForce = v;
-        });
-      });
-      gui.add(params, 'seekMaxSpeed', 0, 5).onChange((v) => {
-        physics.particles.forEach((particle) => {
-          particle.data.seek.maxSpeed = v;
-          particle.data.seekRandom.maxSpeed = v;
-        });
       });
 
       gui.open();
