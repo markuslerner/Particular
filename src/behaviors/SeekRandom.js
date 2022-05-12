@@ -10,14 +10,14 @@ export default class SeekRandom {
     maxForce = 0.5,
     min = new Vector3(-10, -10, -10),
     max = new Vector3(10, 10, 10),
-    distanceMin = 0.01,
+    minDistance = 0.01,
     slowDownDistance = 0.0,
   }) {
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.min = min;
     this.max = max;
-    this.distanceMin = distanceMin < maxForce ? maxForce : distanceMin;
+    this.minDistance = minDistance < maxForce ? maxForce : minDistance;
     this.slowDownDistance = slowDownDistance;
     this.enabled = true;
 
@@ -48,7 +48,7 @@ export default class SeekRandom {
     desired.sub(particle);
     const dist = desired.length();
 
-    if (dist <= this.distanceMin) {
+    if (dist <= this.minDistance) {
       this.setRandomTarget();
     } else if (dist < this.slowDownDistance) {
       desired.setLength((this.maxSpeed * dist) / this.slowDownDistance);

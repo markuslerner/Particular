@@ -134,6 +134,7 @@
         seekMaxSpeed: 1.0,
         seekMinDistance: 1.5,
         seekSlowDownDistance: 3.0,
+        seekEasing: 1,
         seekRandom: false,
         separate: false,
         wander: false,
@@ -160,21 +161,14 @@
 
       const gui = new GUI();
 
-      const neighbors1 = new Set();
-      const neighbors2 = new Set();
-
       const createBehaviors = (particle) => {
         if (!particle.data) {
           particle.data = {};
           particle.data.seekTarget = new Vector3();
           if (Math.random() < 0.5) {
             particle.data.seekTarget.x = -2;
-            // particle.neighbors = neighbors1;
-            // particle.neighbors.add(particle);
           } else {
             particle.data.seekTarget.x = 2;
-            // particle.neighbors = neighbors2;
-            // particle.neighbors.add(particle);
           }
 
           particle.data.avoid = new Avoid({
@@ -197,6 +191,7 @@
             maxSpeed: params.seekMaxSpeed,
             minDistance: params.seekMinDistance,
             slowDownDistance: params.seekSlowDownDistance,
+            easing: (k) => Math.pow(k, params.seekEasing),
           });
           particle.addBehavior(particle.data.seek);
 
@@ -288,6 +283,11 @@
                 particle.data.seek.slowDownDistance = v;
               });
             });
+          folder.add(params, 'seekEasing', 1.0, 10.0).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.easing = (k) => Math.pow(k, params.seekEasing);
+            });
+          });
         }
 
         folder.open();

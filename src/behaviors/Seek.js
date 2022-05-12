@@ -14,6 +14,7 @@ export default class Seek {
     maxForce = 0.5,
     minDistance = 0.0,
     slowDownDistance = 100.0,
+    easing = undefined,
   }) {
     this.target = target;
     this.maxSpeed = maxSpeed;
@@ -21,6 +22,7 @@ export default class Seek {
     this.minDistance = minDistance;
     this.slowDownDistance = slowDownDistance;
     this.enabled = true;
+    this.easing = easing;
   }
 
   apply(particle) {
@@ -37,10 +39,12 @@ export default class Seek {
 
     if (distance > this.minDistance) {
       if (distance < this.minDistance + this.slowDownDistance) {
-        desired.setLength(
-          this.maxSpeed *
-            ((distance - this.minDistance) / this.slowDownDistance)
-        );
+        const k = (distance - this.minDistance) / this.slowDownDistance;
+        if (this.easing !== undefined) {
+          desired.setLength(this.maxSpeed * this.easing(k));
+        } else {
+          desired.setLength(this.maxSpeed * k);
+        }
       } else {
         desired.setLength(this.maxSpeed);
       }
