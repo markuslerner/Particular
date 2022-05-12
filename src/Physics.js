@@ -5,7 +5,6 @@ import PhysicsSimple from './PhysicsSimple.js';
 import HashGrid from './HashGrid.js';
 
 let count = 0;
-const gridUpdateInterval = 1;
 // const batchSize = 100;
 // let start = 0;
 
@@ -20,19 +19,24 @@ const gridUpdateInterval = 1;
  * daniel@lab-eds.org
  */
 export default class Physics extends PhysicsSimple {
-  /**
-   * Initializes an Verlet engine instance
-   *
-   */
-  constructor({ min = null, max = null, bounce = false, neighborRange = 80 }) {
-    super();
+  constructor(props) {
+    const {
+      min = null,
+      max = null,
+      bounce = false,
+      neighborRange = 80, // max distance for picking neighbors
+      friction = 0.95,
+      springIterationsCount = 50,
+    } = props;
+    super(props);
 
-    this.hashgrid = new HashGrid(neighborRange);
+    this.hashgrid = new HashGrid({ neighborRange });
     this.box = null; // Bounding Box
     this.springMap = null;
+    this.neighborsCountAverage = 0;
 
     if (min !== null && max !== null) {
-      // this.box = new BWorldBox(min, max);
+      // this.box = new WorldBox(min, max);
       this.box.setBounceSpace(bounce);
       this.box.setWrapSpace(!bounce);
       this.addBehavior(this.box);
@@ -46,8 +50,7 @@ export default class Physics extends PhysicsSimple {
    * @return itself
    */
   addParticle(particle) {
-    const p = this.returnIfConstrained(particle);
-    super.addParticle(p);
+    const p = super.addParticle(particle);
     this.hashgrid.add(p);
     return p;
   }
@@ -113,26 +116,26 @@ export default class Physics extends PhysicsSimple {
   //   return count;
   // }
 
-  // public void setBox(Vec min, Vec max) {
-  //   if (this.box == null) {
-  //     this.box = new BWorldBox(min, max);
-  //   } else {
-  //     this.box.setMin(min);
-  //     this.box.setMax(max);
-  //   }
-  // }
+  setBox(min, max) {
+    if (this.box === null) {
+      this.box = new WorldBox(min, max);
+    } else {
+      this.box.setMin(min);
+      this.box.setMax(max);
+    }
+  }
 
-  // public void setBounceSpace(boolean bounce) {
-  //   if (this.box != null) {
-  //     this.box.setBounceSpace(bounce);
-  //   }
-  // }
+  setBounceSpace(bounce) {
+    if (this.box !== null) {
+      this.box.setBounceSpace(bounce);
+    }
+  }
 
-  // public void setWrappedSpace(boolean wrap) {
-  //   if (this.box != null) {
-  //     this.box.setWrapSpace(wrap);
-  //   }
-  // }
+  setWrappedSpace(wrap) {
+    if (this.box !== null) {
+      this.box.setWrapSpace(wrap);
+    }
+  }
 
   clear() {
     super.clear();
@@ -150,9 +153,9 @@ export default class Physics extends PhysicsSimple {
    *            particle to remove
    * @return true, if removed successfully
    */
-  removeParticle(p) {
-    this.hashgrid.delete(p);
-    return super.removeParticle(p);
+  removeParticle(particle) {
+    this.hashgrid.delete(particle);
+    return super.removeParticle(particle);
   }
 
   /**
@@ -162,54 +165,31 @@ export default class Physics extends PhysicsSimple {
    *            spring to remove
    * @return true, if the spring has been removed
    */
-  removeSpring(s) {
-    this.springMap.delete(s);
-    return super.removeSpring(s);
+  removeSpring(spring) {
+    this.springMap.delete(spring);
+    return super.removeSpring(spring);
   }
 
-  updateParticles(deltaTime) {
-    // console.log(this.hashgrid.H.toJS());
+  update(deltaTime = 1) {
+    this.hashgrid.updateAll();
 
-    // let neighborsNumAverage = 0;
+    this.neighborsCountAverage = 0;
 
     this.particles.forEach((particle) => {
       // if(particle.neighbors === null || (key >= start && key < start + batchSize)) {
       particle.neighbors = this.hashgrid.check(particle);
 
-      // neighborsNumAverage += particle.neighbors.size;
-
-      this.behaviors.forEach((behavior) => {
-        behavior.apply(particle);
-      });
+      this.neighborsCountAverage += particle.neighbors.size;
     });
 
     // start += batchSize;
-    // if(start > this.particles.size + batchSize) {
+    // if (start > this.particles.size + batchSize) {
     //   start = 0;
     // }
 
-    // neighborsNumAverage /= this.particles.size;
+    this.neighborsCountAverage /= this.particles.size;
+    this.neighborsCountAverage = Math.round(this.neighborsCountAverage);
 
-    // console.log(Math.round(neighborsNumAverage) + ' neighbors per particle by average');
-
-    this.particles.forEach((particle) => {
-      particle.scaleVelocity(this.friction);
-      particle.update(deltaTime);
-    });
-  }
-
-  update(deltaTime = 1) {
-    let doUpdate = false;
-    if (count === gridUpdateInterval) {
-      doUpdate = true;
-      count = 0;
-    }
-    count++;
-
-    if (doUpdate) {
-      this.hashgrid.updateAll();
-    }
-    this.updateParticles(deltaTime);
-    this.updateSprings();
+    super.update(deltaTime);
   }
 }

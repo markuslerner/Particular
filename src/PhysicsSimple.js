@@ -10,7 +10,7 @@
  * Default iterations for verlet solver: 50
  */
 export default class PhysicsSimple {
-  constructor({ friction = 0.95, numIterations = 50 }) {
+  constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
     this.behaviors = new Set();
     this.constraints = new Set();
     this.groups = new Set();
@@ -18,7 +18,7 @@ export default class PhysicsSimple {
     this.springs = new Set();
 
     this.friction = friction;
-    this.numIterations = numIterations;
+    this.springIterationsCount = springIterationsCount;
   }
 
   /**
@@ -207,24 +207,15 @@ export default class PhysicsSimple {
   updateParticles(deltaTime) {
     // console.log('updateParticles()');
 
-    // let neighborsNumAverage = 0;
-
     this.particles.forEach((particle) => {
       if (particle.neighbors === null) {
         particle.neighbors = this.particles;
       }
-      // neighborsNumAverage += particle.neighbors.size;
 
       this.behaviors.forEach((behavior) => {
         behavior.apply(particle);
       });
-    });
 
-    // neighborsNumAverage /= this.particles.size;
-
-    // console.log(Math.round(neighborsNumAverage) + ' neighbors per particle by average');
-
-    this.particles.forEach((particle) => {
       particle.scaleVelocity(this.friction);
       particle.update(deltaTime);
     });
@@ -232,7 +223,7 @@ export default class PhysicsSimple {
 
   updateSprings(deltaTime) {
     if (this.springs !== null) {
-      for (let i = this.numIterations; i > 0; i--) {
+      for (let i = this.springIterationsCount; i > 0; i--) {
         this.springs.forEach((spring) => {
           spring.update(deltaTime);
         });

@@ -3,18 +3,18 @@
  */
 
 export default class HashGrid {
-  constructor({ bucketSize = 100 }) {
-    this.bucketSize = bucketSize;
+  constructor({ neighborRange = 100 } = {}) {
+    this.neighborRange = neighborRange;
     this.H = new Map();
     this.particles = new Set();
   }
 
   getXr(pos) {
-    return Math.floor(pos.x / this.bucketSize);
+    return Math.floor(pos.x / this.neighborRange);
   }
 
   getYr(pos) {
-    return Math.floor(pos.y / this.bucketSize);
+    return Math.floor(pos.y / this.neighborRange);
   }
 
   getKey(pos) {
@@ -28,6 +28,7 @@ export default class HashGrid {
 
   clear() {
     this.H.clear();
+    this.particles.clear();
   }
 
   insert(particle) {
@@ -90,9 +91,5 @@ export default class HashGrid {
 
   size() {
     return this.H.size;
-  }
-
-  setBucketSize(bucketSize) {
-    this.bucketSize = bucketSize;
   }
 }
