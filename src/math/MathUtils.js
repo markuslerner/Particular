@@ -12,7 +12,7 @@ const DEG2RAD = Math.PI / 180;
 const RAD2DEG = 180 / Math.PI;
 
 // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
-function generateUUID() {
+export function generateUUID() {
   const d0 = (Math.random() * 0xffffffff) | 0;
   const d1 = (Math.random() * 0xffffffff) | 0;
   const d2 = (Math.random() * 0xffffffff) | 0;
@@ -43,23 +43,23 @@ function generateUUID() {
   return uuid.toLowerCase();
 }
 
-function clamp(value, min, max) {
+export function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
 // compute euclidean modulo of m % n
 // https://en.wikipedia.org/wiki/Modulo_operation
-function euclideanModulo(n, m) {
+export function euclideanModulo(n, m) {
   return ((n % m) + m) % m;
 }
 
 // Linear mapping from range <a1, a2> to range <b1, b2>
-function mapLinear(x, a1, a2, b1, b2) {
+export function mapLinear(x, a1, a2, b1, b2) {
   return b1 + ((x - a1) * (b2 - b1)) / (a2 - a1);
 }
 
-// https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/inverse-lerp-a-super-useful-yet-often-overlooked-function-r5230/
-function inverseLerp(x, y, value) {
+// https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/inverse-lerp-a-super-useful-yet-often-overlooked-export function-r5230/
+export function inverseLerp(x, y, value) {
   if (x !== y) {
     return (value - x) / (y - x);
   } else {
@@ -68,22 +68,22 @@ function inverseLerp(x, y, value) {
 }
 
 // https://en.wikipedia.org/wiki/Linear_interpolation
-function lerp(x, y, t) {
+export function lerp(x, y, t) {
   return (1 - t) * x + t * y;
 }
 
 // http://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/
-function damp(x, y, lambda, dt) {
+export function damp(x, y, lambda, dt) {
   return lerp(x, y, 1 - Math.exp(-lambda * dt));
 }
 
 // https://www.desmos.com/calculator/vcsjnyz7x4
-function pingpong(x, length = 1) {
+export function pingpong(x, length = 1) {
   return length - Math.abs(euclideanModulo(x, length * 2) - length);
 }
 
 // http://en.wikipedia.org/wiki/Smoothstep
-function smoothstep(x, min, max) {
+export function smoothstep(x, min = 0, max = 1) {
   if (x <= min) return 0;
   if (x >= max) return 1;
 
@@ -92,7 +92,7 @@ function smoothstep(x, min, max) {
   return x * x * (3 - 2 * x);
 }
 
-function smootherstep(x, min, max) {
+export function smootherstep(x, min = 0, max = 1) {
   if (x <= min) return 0;
   if (x >= max) return 1;
 
@@ -102,22 +102,22 @@ function smootherstep(x, min, max) {
 }
 
 // Random integer from <low, high> interval
-function randInt(low, high) {
+export function randInt(low, high) {
   return low + Math.floor(Math.random() * (high - low + 1));
 }
 
 // Random float from <low, high> interval
-function randFloat(low, high) {
+export function randFloat(low, high) {
   return low + Math.random() * (high - low);
 }
 
 // Random float from <-range/2, range/2> interval
-function randFloatSpread(range) {
+export function randFloatSpread(range) {
   return range * (0.5 - Math.random());
 }
 
 // Deterministic pseudo-random float in the interval [ 0, 1 ]
-function seededRandom(s) {
+export function seededRandom(s) {
   if (s !== undefined) _seed = s;
 
   // Mulberry32 generator
@@ -131,27 +131,27 @@ function seededRandom(s) {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 
-function degToRad(degrees) {
+export function degToRad(degrees) {
   return degrees * DEG2RAD;
 }
 
-function radToDeg(radians) {
+export function radToDeg(radians) {
   return radians * RAD2DEG;
 }
 
-function isPowerOfTwo(value) {
+export function isPowerOfTwo(value) {
   return (value & (value - 1)) === 0 && value !== 0;
 }
 
-function ceilPowerOfTwo(value) {
+export function ceilPowerOfTwo(value) {
   return Math.pow(2, Math.ceil(Math.log(value) / Math.LN2));
 }
 
-function floorPowerOfTwo(value) {
+export function floorPowerOfTwo(value) {
   return Math.pow(2, Math.floor(Math.log(value) / Math.LN2));
 }
 
-function setQuaternionFromProperEuler(q, a, b, c, order) {
+export function setQuaternionFromProperEuler(q, a, b, c, order) {
   // Intrinsic Proper Euler Angles - see https://en.wikipedia.org/wiki/Euler_angles
 
   // rotations are applied to the axes in the order specified by 'order'
@@ -206,7 +206,7 @@ function setQuaternionFromProperEuler(q, a, b, c, order) {
   }
 }
 
-function denormalize(value, array) {
+export function denormalize(value, array) {
   switch (array.constructor) {
     case Float32Array:
       return value;
@@ -228,7 +228,7 @@ function denormalize(value, array) {
   }
 }
 
-function normalize(value, array) {
+export function normalize(value, array) {
   switch (array.constructor) {
     case Float32Array:
       return value;
