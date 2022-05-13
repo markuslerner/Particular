@@ -80,6 +80,7 @@ export default class HashGrid {
         checked = checked.concat(this.H.get(keys[i]));
       }
     }
+
     return new Set(checked);
   }
 
