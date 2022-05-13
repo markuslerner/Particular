@@ -13,8 +13,7 @@ export default class Particle extends Vector3 {
   constructor(x = 0.0, y = 0.0, z = 0.0, w = 1.0, r = 1.0) {
     super(x, y, z);
 
-    this.prev = new Vector3();
-    this.prev.set(x, y, z);
+    this.prev = new Vector3(x, y, z);
     this.temp = new Vector3();
     this.locked = false;
 
@@ -79,12 +78,6 @@ export default class Particle extends Vector3 {
   }
 
   applyForce(deltaTime) {
-    // Java:
-    // temp.set(this);
-    // addSelf(sub(prev).addSelf(force.mult(weight)));
-    // prev.set(temp.copy());
-    // force.clear();
-
     this.temp.copy(this);
 
     var delta = new Vector3().copy(this);
@@ -92,6 +85,7 @@ export default class Particle extends Vector3 {
       .sub(this.prev)
       .add(this.force.multiplyScalar(this.weight * Math.min(deltaTime, 1)));
     this.add(delta);
+
     this.prev.copy(this.temp);
 
     this.force.set(0, 0, 0);
@@ -185,7 +179,9 @@ export default class Particle extends Vector3 {
   }
 
   scaleVelocity(scale) {
-    this.prev.lerp(this, 0 + scale);
+    if (scale > 0) {
+      this.prev.lerp(this, 0 + scale);
+    }
     return this;
   }
 
@@ -207,9 +203,6 @@ export default class Particle extends Vector3 {
   }
 
   setVelocity(vel) {
-    // var delta = new Vector3().copy(this);
-    // this.prev.copy(delta.sub(vel));
-
     this.prev.copy(this).sub(vel);
   }
 
