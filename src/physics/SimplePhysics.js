@@ -9,7 +9,7 @@
  * daniel@lab-eds.org
  * Default iterations for verlet solver: 50
  */
-export default class PhysicsSimple {
+export default class SimplePhysics {
   constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
     this.behaviors = new Set();
     this.constraints = new Set();

@@ -7,15 +7,15 @@ import { default as SeekRandom } from './behaviors/SeekRandom.js';
 import { default as Separate } from './behaviors/Separate.js';
 import { default as Wander } from './behaviors/Wander.js';
 
+import { default as HashGrid } from './math/HashGrid.js';
 import { default as Math2 } from './math/MathUtils.js';
 import { default as Quaternion } from './math/Quaternion.js';
 import { default as Vector3 } from './math/Vector3.js';
 import { default as VecUtils } from './math/VecUtils.js';
 
-import { default as HashGrid } from './HashGrid.js';
 import { default as Particle } from './Particle.js';
-import { default as Physics } from './Physics.js';
-import { default as PhysicsSimple } from './PhysicsSimple.js';
+import { default as GridPhysics } from './physics/GridPhysics.js';
+import { default as SimplePhysics } from './physics/SimplePhysics.js';
 
 // import { default as WorldBox } from './WorldBox.js'
 
@@ -33,8 +33,8 @@ export {
   Vector3,
   HashGrid,
   Particle,
-  Physics,
-  PhysicsSimple,
+  GridPhysics,
+  SimplePhysics,
   VecUtils,
   // WorldBox,
 };

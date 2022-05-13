@@ -1,8 +1,8 @@
 // ported by markuslerner.com from punktiert Processing library:
 // https://github.com/djrkohler/punktiert/tree/master/src/punktiert/physics
 
-import PhysicsSimple from './PhysicsSimple.js';
-import HashGrid from './HashGrid.js';
+import SimplePhysics from './SimplePhysics.js';
+import HashGrid from '../math/HashGrid.js';
 
 /**
  * A particle physics engine using Verlet integration </p> based on:
@@ -14,7 +14,7 @@ import HashGrid from './HashGrid.js';
  * Koehler - 2012 www.lab-eds.org for feedback please contact me at:
  * daniel@lab-eds.org
  */
-export default class Physics extends PhysicsSimple {
+export default class GridPhysics extends SimplePhysics {
   constructor(props) {
     const {
       min = null,

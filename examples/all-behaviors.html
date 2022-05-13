@@ -94,7 +94,7 @@
 
       import {
         Particle,
-        PhysicsSimple,
+        SimplePhysics,
         Avoid,
         Collision,
         Seek,
@@ -147,7 +147,9 @@
 
       const avoidTarget = new Vector3();
 
-      const physics = new PhysicsSimple({ friction: params.friction });
+      const physics = new SimplePhysics({
+        friction: params.friction,
+      });
 
       let scales = [];
       let vertices = [];
