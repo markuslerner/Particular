@@ -68,20 +68,7 @@
 
       const params = {
         friction: 0.98,
-        count: 500,
-        size: 3,
-        opacity: 0.8,
-        radiusFactor: 1.0,
-        constrainZ: false,
-        collision: true,
-        collisionMaxForce: 2.0,
-        seek: true,
-        seekMouse: true,
-        seekMaxForce: 2.0,
-        seekMaxSpeed: 1.0,
-        seekMinDistance: 1.5,
-        seekSlowDownDistance: 3.0,
-        seekEasing: 1,
+        count: 1,
       };
 
       const sprite = new THREE.TextureLoader().load('textures/circle.png');
@@ -114,61 +101,6 @@
 
       const gui = new GUI();
 
-      const initBehavior = (type) => {
-        const folder = gui.addFolder(type);
-
-        folder
-          .add(params, type)
-          .name('enabled')
-          .onChange((v) => {
-            enableDisableBehavior(type);
-          });
-
-        if (type === 'seek') {
-          folder.add(params, 'seekMouse').onChange((v) => {
-            physics.particles.forEach((particle) => {
-              particle.data.seek.target = v ? mousePosition : origin;
-            });
-          });
-          folder.add(params, 'seekMaxForce', 0, 10).onChange((v) => {
-            physics.particles.forEach((particle) => {
-              particle.data.seek.maxForce = v;
-            });
-          });
-          folder.add(params, 'seekMaxSpeed', 0, 10).onChange((v) => {
-            physics.particles.forEach((particle) => {
-              particle.data.seek.maxSpeed = v;
-            });
-          });
-          folder.add(params, 'seekMinDistance', 0, 10).onChange((v) => {
-            physics.particles.forEach((particle) => {
-              particle.data.seek.minDistance = v;
-            });
-          });
-          folder
-            .add(params, 'seekSlowDownDistance', 0.0, 50.0)
-            .onChange((v) => {
-              physics.particles.forEach((particle) => {
-                particle.data.seek.slowDownDistance = v;
-              });
-            });
-          folder.add(params, 'seekEasing', 1.0, 10.0).onChange((v) => {
-            physics.particles.forEach((particle) => {
-              particle.data.seek.easing = (k) => Math.pow(k, params.seekEasing);
-            });
-          });
-        }
-
-        folder.open();
-      };
-
-      const enableDisableBehavior = (type) => {
-        physics.particles.forEach((particle) => {
-          if (!particle.data[type]) return;
-          particle.data[type].enabled = params[type];
-        });
-      };
-
       const createParticles = () => {
         vertices = [];
         physics.clear();
@@ -183,40 +115,14 @@
           const particle = new Particle(x, y, z);
           physics.addParticle(particle);
 
-          particle.data = {};
+          particle.addBehavior(new Collision());
 
-          particle.data.collision = new Collision({
-            offset: 0.0,
-            maxForce: params.collisionMaxForce,
-          });
-          particle.addBehavior(particle.data.collision);
-
-          particle.data.seek = new Seek({
-            target: params.seekMouse ? mousePosition : origin,
-            maxForce: params.seekMaxForce,
-            maxSpeed: params.seekMaxSpeed,
-            minDistance: params.seekMinDistance,
-            slowDownDistance: params.seekSlowDownDistance,
-            easing: (k) => Math.pow(k, params.seekEasing),
-          });
-          particle.addBehavior(particle.data.seek);
+          particle.addBehavior(
+            new Seek({
+              target: mousePosition,
+            })
+          );
         }
-
-        behaviors.forEach((behavior) => {
-          enableDisableBehavior(behavior);
-        });
-
-        updateSizes();
-      };
-
-      const updateSizes = () => {
-        let i = 0;
-        physics.particles.forEach((particle) => {
-          particle.radius = (params.size / 2) * params.radiusFactor;
-          i++;
-        });
-
-        material.size = params.size;
       };
 
       gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
@@ -224,22 +130,6 @@
       });
       gui.add(params, 'count', 0, 5000).onChange((v) => {
         createParticles();
-      });
-      gui.add(params, 'size', 0.01, 10.0).onChange((v) => {
-        updateSizes();
-      });
-      gui.add(params, 'opacity', 0.0, 1.0).onChange((v) => {
-        material.uniforms.opacity.value = v;
-      });
-      gui.add(params, 'radiusFactor', 0.0, 10.0).onChange((v) => {
-        updateSizes();
-      });
-      gui.add(params, 'constrainZ').onChange((v) => {
-        if (!v) {
-          physics.particles.forEach((particle) => {
-            particle.z = random(0.01, 0.01);
-          });
-        }
       });
 
       gui.open();
@@ -272,10 +162,6 @@
 
       const geometry = new THREE.BufferGeometry();
 
-      behaviors.forEach((behavior) => {
-        initBehavior(behavior);
-      });
-
       createParticles();
 
       const points = new THREE.Points(geometry, material);
@@ -291,10 +177,6 @@
         let i = 0;
 
         physics.particles.forEach((particle) => {
-          if (params.constrainZ) {
-            particle.constrainZ(); // Keep on a plane
-          }
-
           vertices[i] = particle.x;
           vertices[i + 1] = particle.y;
           vertices[i + 2] = particle.z;
