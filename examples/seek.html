@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Particular – Seek Example</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <div id="title">
+      <h1><a href="./index.html">Particular</a> › Seek Example</h1>
+      <p></p>
+
+      <ul>
+        <li><a href="./index.html">« Index</a></li>
+      </ul>
+    </div>
+
+    <div id="info">
+      <a
+        href="https://github.com/markuslerner/Particular"
+        target="_blank"
+        rel="noopener"
+        >Source</a
+      >
+    </div>
+
+    <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
+
+    <!-- Import maps polyfill -->
+    <!-- Remove this when import maps will be widely supported -->
+    <script
+      async
+      src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"
+    ></script>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js",
+          "three": "https://unpkg.com/three@0.139.2/build/three.module.js",
+          "OrbitControls": "https://unpkg.com/three@0.139.2/examples/jsm/controls/OrbitControls.js"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { OrbitControls } from 'OrbitControls';
+      import { GUI } from 'gui';
+
+      import {
+        Particle,
+        SimplePhysics,
+        Collision,
+        Seek,
+        Vector3,
+      } from '../src/index.js';
+
+      import { random, addMouseListener } from './utils/index.js';
+
+      const behaviors = ['collision', 'seek'];
+
+      const params = {
+        friction: 0.98,
+        count: 500,
+        size: 3,
+        opacity: 0.8,
+        radiusFactor: 1.0,
+        constrainZ: false,
+        collision: true,
+        collisionMaxForce: 2.0,
+        seek: true,
+        seekMouse: true,
+        seekMaxForce: 2.0,
+        seekMaxSpeed: 1.0,
+        seekMinDistance: 1.5,
+        seekSlowDownDistance: 3.0,
+        seekEasing: 1,
+      };
+
+      const sprite = new THREE.TextureLoader().load('textures/circle.png');
+
+      const material = new THREE.PointsMaterial({
+        size: 3,
+        sizeAttenuation: false,
+        map: sprite,
+        alphaTest: 0.5,
+        transparent: true,
+      });
+
+      const range = 2;
+
+      const mousePosition = new Vector3();
+      const origin = new Vector3();
+
+      const physics = new SimplePhysics({
+        friction: params.friction,
+      });
+
+      let vertices = [];
+
+      const stats = new Stats();
+      stats.dom.style.left = 'auto';
+      stats.dom.style.right = '0';
+      stats.dom.style.top = 'auto';
+      stats.dom.style.bottom = '0';
+      document.body.appendChild(stats.dom);
+
+      const gui = new GUI();
+
+      const initBehavior = (type) => {
+        const folder = gui.addFolder(type);
+
+        folder
+          .add(params, type)
+          .name('enabled')
+          .onChange((v) => {
+            enableDisableBehavior(type);
+          });
+
+        if (type === 'seek') {
+          folder.add(params, 'seekMouse').onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.target = v ? mousePosition : origin;
+            });
+          });
+          folder.add(params, 'seekMaxForce', 0, 10).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.maxForce = v;
+            });
+          });
+          folder.add(params, 'seekMaxSpeed', 0, 10).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.maxSpeed = v;
+            });
+          });
+          folder.add(params, 'seekMinDistance', 0, 10).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.minDistance = v;
+            });
+          });
+          folder
+            .add(params, 'seekSlowDownDistance', 0.0, 50.0)
+            .onChange((v) => {
+              physics.particles.forEach((particle) => {
+                particle.data.seek.slowDownDistance = v;
+              });
+            });
+          folder.add(params, 'seekEasing', 1.0, 10.0).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.seek.easing = (k) => Math.pow(k, params.seekEasing);
+            });
+          });
+        }
+
+        folder.open();
+      };
+
+      const enableDisableBehavior = (type) => {
+        physics.particles.forEach((particle) => {
+          if (!particle.data[type]) return;
+          particle.data[type].enabled = params[type];
+        });
+      };
+
+      const createParticles = () => {
+        vertices = [];
+        physics.clear();
+
+        for (let i = 0; i < params.count; i++) {
+          const x = random(-range, range);
+          const y = random(-range, range);
+          const z = random(-range, range);
+
+          vertices.push(x, y, z);
+
+          const particle = new Particle(x, y, z);
+          physics.addParticle(particle);
+
+          particle.data = {};
+
+          particle.data.collision = new Collision({
+            offset: 0.0,
+            maxForce: params.collisionMaxForce,
+          });
+          particle.addBehavior(particle.data.collision);
+
+          particle.data.seek = new Seek({
+            target: params.seekMouse ? mousePosition : origin,
+            maxForce: params.seekMaxForce,
+            maxSpeed: params.seekMaxSpeed,
+            minDistance: params.seekMinDistance,
+            slowDownDistance: params.seekSlowDownDistance,
+            easing: (k) => Math.pow(k, params.seekEasing),
+          });
+          particle.addBehavior(particle.data.seek);
+        }
+
+        behaviors.forEach((behavior) => {
+          enableDisableBehavior(behavior);
+        });
+
+        updateSizes();
+      };
+
+      const updateSizes = () => {
+        let i = 0;
+        physics.particles.forEach((particle) => {
+          particle.radius = (params.size / 2) * params.radiusFactor;
+          i++;
+        });
+
+        material.size = params.size;
+      };
+
+      gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
+        physics.friction = v;
+      });
+      gui.add(params, 'count', 0, 5000).onChange((v) => {
+        createParticles();
+      });
+      gui.add(params, 'size', 0.01, 10.0).onChange((v) => {
+        updateSizes();
+      });
+      gui.add(params, 'opacity', 0.0, 1.0).onChange((v) => {
+        material.uniforms.opacity.value = v;
+      });
+      gui.add(params, 'radiusFactor', 0.0, 10.0).onChange((v) => {
+        updateSizes();
+      });
+      gui.add(params, 'constrainZ').onChange((v) => {
+        if (!v) {
+          physics.particles.forEach((particle) => {
+            particle.z = random(0.01, 0.01);
+          });
+        }
+      });
+
+      gui.open();
+
+      const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('container').appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        1000
+      );
+      camera.position.set(0.0, 0.0, 10.0);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.12;
+      controls.minDistance = 0.1;
+      controls.maxDistance = 10000;
+      controls.target.set(0, 0, 0);
+      controls.update();
+
+      const geometry = new THREE.BufferGeometry();
+
+      behaviors.forEach((behavior) => {
+        initBehavior(behavior);
+      });
+
+      createParticles();
+
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      const animate = (time) => {
+        requestAnimationFrame(animate);
+
+        controls.update();
+
+        physics.update();
+
+        let i = 0;
+
+        physics.particles.forEach((particle) => {
+          if (params.constrainZ) {
+            particle.constrainZ(); // Keep on a plane
+          }
+
+          vertices[i] = particle.x;
+          vertices[i + 1] = particle.y;
+          vertices[i + 2] = particle.z;
+          i += 3;
+        });
+
+        geometry.setAttribute(
+          'position',
+          new THREE.Float32BufferAttribute(vertices, 3)
+        );
+
+        geometry.attributes.position.needsUpdate = true;
+
+        renderer.render(scene, camera);
+
+        stats.update();
+      };
+
+      animate();
+
+      addMouseListener(renderer, camera, mousePosition);
+
+      window.addEventListener(
+        'resize',
+        () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        },
+        false
+      );
+    </script>
+  </body>
+</html>
