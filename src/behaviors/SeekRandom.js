@@ -12,7 +12,7 @@ export default class SeekRandom {
     max = new Vector3(10, 10, 10),
     minDistance = 0.01,
     slowDownDistance = 0.0,
-  }) {
+  } = {}) {
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.min = min;

@@ -4,7 +4,7 @@ import { limit } from '../math/VecUtils.js';
 // basic wander-algorythm
 
 export default class Wander {
-  constructor({ speed = 1.0, maxChange = 1.0, maxForce = 1.0 }) {
+  constructor({ speed = 1.0, maxChange = 1.0, maxForce = 1.0 } = {}) {
     this.speed = speed;
     this.maxChange = maxChange;
     this.maxForce = maxForce;

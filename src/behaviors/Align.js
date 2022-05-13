@@ -10,7 +10,7 @@ const ali = new Vector3();
  * implementation Daniel Shiffman (www.shiffman.net); Jose Sanchez (www.plethora-project.com)
  */
 export default class Align {
-  constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 }) {
+  constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 } = {}) {
     this.distance = distance;
     this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;

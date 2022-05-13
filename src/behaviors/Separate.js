@@ -11,7 +11,7 @@ const delta = new Vector3();
  */
 
 export default class Separate {
-  constructor({ distance = 25.0, maxSpeed = 3.0, maxForce = 0.05 }) {
+  constructor({ distance = 25.0, maxSpeed = 3.0, maxForce = 0.05 } = {}) {
     this.distance = distance;
     this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;

@@ -15,7 +15,7 @@ export default class Seek {
     minDistance = 0.0,
     slowDownDistance = 100.0,
     easing = undefined,
-  }) {
+  } = {}) {
     this.target = target;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;

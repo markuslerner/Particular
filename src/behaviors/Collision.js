@@ -16,7 +16,7 @@ export default class Collision {
   /**
    * proportional offset of the particle radius for offset (radius*(1-offset))
    */
-  constructor({ offset = 0.0, maxForce = 0.2 }) {
+  constructor({ offset = 0.0, maxForce = 0.2 } = {}) {
     this.offset = offset;
     this.maxForce = maxForce;
     this.enabled = true;

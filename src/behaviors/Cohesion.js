@@ -13,7 +13,7 @@ const steer = new Vector3();
  *
  */
 export default class Cohesion {
-  constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 }) {
+  constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 } = {}) {
     this.distance = distance;
     this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;

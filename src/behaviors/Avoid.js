@@ -7,7 +7,7 @@ export default class Avoid {
     maxSpeed = 3.5,
     maxForce = 0.5,
     maxDistance = 100.0,
-  }) {
+  } = {}) {
     this.target = target;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
