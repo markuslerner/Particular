@@ -54,6 +54,7 @@
     <script type="x-shader/x-fragment" id="fragmentshader">
 
       uniform vec3 color;
+      uniform float opacity;
 
       varying float size;
 
@@ -65,7 +66,7 @@
 
         float smoothWith = 0.02 * size;
 
-      	gl_FragColor = vec4( color, 0.8 * smoothstep(0.5, 0.5 - smoothWith, length) );
+      	gl_FragColor = vec4( color, opacity * smoothstep(0.5, 0.5 - smoothWith, length) );
 
       }
     </script>
@@ -114,6 +115,7 @@
         count: 1000,
         sizeMin: 0.01,
         sizeMax: 0.5,
+        opacity: 0.8,
         radiusFactor: 1.0,
         collision: true,
         seek: true,
@@ -245,6 +247,9 @@
       gui.add(params, 'sizeMax', 0.01, 10.0).onChange((v) => {
         updateSizes();
       });
+      gui.add(params, 'opacity', 0.0, 1.0).onChange((v) => {
+        material.uniforms.opacity.value = v;
+      });
       gui.add(params, 'radiusFactor', 0.0, 10.0).onChange((v) => {
         updateSizes();
       });
@@ -305,6 +310,7 @@
       const material = new THREE.ShaderMaterial({
         uniforms: {
           color: { value: new THREE.Color(0xffffff) },
+          opacity: { value: params.opacity },
         },
         vertexShader: document.getElementById('vertexshader').textContent,
         fragmentShader: document.getElementById('fragmentshader').textContent,
