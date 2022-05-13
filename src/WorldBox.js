@@ -4,7 +4,7 @@
 
 // /**
 //  * can be used as a framing wrap- or bouncing box for your physics engine or VParticle
-//  * </p> for convinience use one of the VPhysics constructors
+//  * </p> for convenience use one of the Physics constructors
 //  */
 // public class BWorldBox implements BehaviorInterface {
 
