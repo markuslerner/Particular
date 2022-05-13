@@ -142,8 +142,7 @@
 
       const range = 2;
 
-      const vec = new THREE.Vector3();
-      const mousePosition = new THREE.Vector3();
+      const mousePosition = new Vector3();
 
       const avoidTarget = new Vector3();
 
@@ -464,7 +463,7 @@
 
       animate();
 
-      addMouseListener(renderer, camera, vec, mousePosition);
+      addMouseListener(renderer, camera, mousePosition);
 
       window.addEventListener(
         'resize',
