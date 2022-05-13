@@ -43,15 +43,13 @@
       {
         "imports": {
           "gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js",
-          "three": "https://unpkg.com/three@0.139.2/build/three.module.js",
-          "OrbitControls": "https://unpkg.com/three@0.139.2/examples/jsm/controls/OrbitControls.js"
+          "three": "https://unpkg.com/three@0.139.2/build/three.module.js"
         }
       }
     </script>
 
     <script type="module">
       import * as THREE from 'three';
-      import { OrbitControls } from 'OrbitControls';
       import { GUI } from 'gui';
 
       import {
@@ -68,7 +66,7 @@
 
       const params = {
         friction: 0.98,
-        count: 1,
+        count: 100,
       };
 
       const sprite = new THREE.TextureLoader().load('textures/circle.png');
@@ -152,14 +150,6 @@
       );
       camera.position.set(0.0, 0.0, 10.0);
 
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.12;
-      controls.minDistance = 0.1;
-      controls.maxDistance = 10000;
-      controls.target.set(0, 0, 0);
-      controls.update();
-
       const geometry = new THREE.BufferGeometry();
 
       createParticles();
@@ -169,8 +159,6 @@
 
       const animate = (time) => {
         requestAnimationFrame(animate);
-
-        controls.update();
 
         physics.update();
 
