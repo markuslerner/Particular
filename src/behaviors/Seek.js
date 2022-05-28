@@ -7,7 +7,7 @@ import { limit } from '../math/VecUtils.js';
  * </p> Seek algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds. Here just the rule of Steering. </p> Java
  * implementation Daniel Shiffman (www.shiffman.net)
  */
-export default class Seek {
+export default class Seek extends EventTarget {
   constructor({
     target = new Vector3(),
     maxSpeed = 3.5,
@@ -15,14 +15,21 @@ export default class Seek {
     minDistance = 0.0,
     slowDownDistance = 100.0,
     easing = undefined,
+    arriveEnabled = false,
+    arriveDistance = 0.01,
   } = {}) {
+    super();
+
     this.target = target;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.minDistance = minDistance;
     this.slowDownDistance = slowDownDistance;
-    this.enabled = true;
     this.easing = easing;
+    this.arriveEnabled = arriveEnabled;
+    this.arriveDistance = arriveDistance;
+    this.enabled = true;
+    this.arrived = false;
   }
 
   apply(particle) {
@@ -33,14 +40,13 @@ export default class Seek {
   }
 
   seek(particle) {
-    const desired = new Vector3().copy(this.target);
-    desired.sub(particle);
+    const desired = new Vector3().copy(this.target).sub(particle);
     const distance = desired.length();
 
     if (distance > this.minDistance) {
       if (distance < this.minDistance + this.slowDownDistance) {
         const k = (distance - this.minDistance) / this.slowDownDistance;
-        if (this.easing !== undefined) {
+        if (this.easing !== undefined && this.easing !== null) {
           desired.setLength(this.maxSpeed * this.easing(k));
         } else {
           desired.setLength(this.maxSpeed * k);
@@ -55,14 +61,14 @@ export default class Seek {
       desired.set(0, 0, 0);
     }
 
+    if (this.arriveEnabled) {
+      const arrived = distance < this.arriveDistance;
+      if (arrived && !this.arrived) {
+        this.dispatchEvent(new Event('arrive'));
+        this.arrived = arrived;
+      }
+    }
+
     return desired;
-  }
-
-  setTarget(target) {
-    this.target = target;
-  }
-
-  setSlowDownDistance(slowDownDistance) {
-    this.slowDownDistance = slowDownDistance;
   }
 }
