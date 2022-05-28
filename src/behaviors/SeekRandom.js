@@ -69,8 +69,4 @@ export default class SeekRandom {
       Math2.randFloat(this.min.z, this.max.z)
     );
   }
-
-  setSlowDownDistance(slowDownDistance) {
-    this.slowDownDistance = slowDownDistance;
-  }
 }

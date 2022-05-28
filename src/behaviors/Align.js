@@ -59,20 +59,4 @@ export default class Align {
     this.distance = distance;
     this.distanceSquared = this.distance * this.distance;
   }
-
-  getMaxSpeed() {
-    return this.maxSpeed;
-  }
-
-  setMaxSpeed(maxSpeed) {
-    this.maxSpeed = maxSpeed;
-  }
-
-  getMaxForce() {
-    return this.maxForce;
-  }
-
-  setMaxForce(maxForce) {
-    this.maxForce = maxForce;
-  }
 }

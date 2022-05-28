@@ -39,12 +39,4 @@ export default class Avoid {
 
     return desired;
   }
-
-  setTarget(target) {
-    this.target = target;
-  }
-
-  setMaxDistance(maxDistance) {
-    this.maxDistance = maxDistance;
-  }
 }

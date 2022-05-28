@@ -38,28 +38,4 @@ export default class Wander {
 
     return this.wanderVelocity;
   }
-
-  // apply(particle) {
-  //   this.wanderDirection.normalize();
-  //   // wanderDirection.cross(upVector, wanderDirection);
-
-  //   this.wanderDirection.x += (Math.random() - 0.5) * this.maxChange;
-  //   this.wanderDirection.y += (Math.random() - 0.5) * this.maxChange;
-  //   this.wanderDirection.z += (Math.random() - 0.5) * this.maxChange;
-
-  //   this.wanderVelocity.setZero();
-  //   this.wanderVelocity.vadd(this.wanderDirection, this.wanderVelocity);
-
-  //   this.wanderVelocity.scale(this.speed, this.wanderVelocity);
-
-  //   VecUtils.limit(this.wanderVelocity, this.maxForce);
-
-  //   // particle.position.vadd(this.wanderVelocity, particle.position);
-  //   particle.velocity.vadd(this.wanderVelocity, particle.velocity);
-
-  // }
-
-  toString() {
-    return 'Wander';
-  }
 }

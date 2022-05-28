@@ -55,22 +55,4 @@ export default class Collision {
       particle.addForce(sum);
     }
   }
-
-  getLimit() {
-    return this.limit;
-  }
-
-  getOffset() {
-    return this.offset;
-  }
-
-  setOffset(offset) {
-    this.offset = offset;
-    return this;
-  }
-
-  setLimit(limit) {
-    this.limit = limit;
-    return this;
-  }
 }
