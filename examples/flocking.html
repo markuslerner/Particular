@@ -66,7 +66,7 @@
       import { random, addMouseListener } from './utils/index.js';
 
       const params = {
-        friction: 0.98,
+        friction: 0.0,
         count: 100,
       };
 
@@ -138,7 +138,7 @@
         }
       };
 
-      gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
+      gui.add(params, 'friction', 0.0, 1.0).onChange((v) => {
         physics.friction = v;
       });
       gui.add(params, 'count', 0, 5000).onChange((v) => {

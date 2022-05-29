@@ -10,7 +10,7 @@
  * Default iterations for verlet solver: 50
  */
 export default class SimplePhysics {
-  constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
+  constructor({ friction = 0.0, springIterationsCount = 50 } = {}) {
     this.behaviors = new Set();
     this.constraints = new Set();
     this.groups = new Set();
