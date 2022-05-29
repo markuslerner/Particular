@@ -27,16 +27,13 @@ export default class Separate {
 
   seperate(particle) {
     const sep = new Vector3();
-
     let count = 0;
-    const distanceSquared = this.distance * this.distance;
-
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
-        const d = particle.distanceToSquared(neighbor);
+        const d = particle.distanceTo(neighbor);
 
         // SEPARATION:
-        if (d < distanceSquared && d > 0.0) {
+        if (d < this.distance && d > 0.0) {
           delta.copy(particle);
           delta.sub(neighbor);
           delta.setLength(1.0 / d);

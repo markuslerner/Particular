@@ -27,13 +27,12 @@ export default class Align {
   align(particle) {
     ali.set(0, 0, 0);
     let count = 0;
-    const distanceSquared = this.distance * this.distance;
 
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
-        const d = particle.distanceToSquared(neighbor);
+        const d = particle.distanceTo(neighbor);
 
-        if (d < distanceSquared) {
+        if (d > 0 && d < this.distance) {
           ali.add(neighbor.getVelocity());
           count++;
         }
@@ -43,6 +42,7 @@ export default class Align {
     if (count > 0) {
       ali.multiplyScalar(1.0 / count);
     }
+
     if (ali.lengthSq() > 0) {
       ali.setLength(this.maxSpeed);
       ali.sub(particle.getVelocity());

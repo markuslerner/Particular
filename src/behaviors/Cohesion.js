@@ -31,12 +31,11 @@ export default class Cohesion {
     sum.set(0, 0, 0);
 
     let count = 0;
-    const distanceSquared = this.distance * this.distance;
 
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
-        const d = particle.distanceToSquared(neighbor);
-        if (d > 0 && d < distanceSquared) {
+        const d = particle.distanceTo(neighbor);
+        if (d > 0 && d < this.distance) {
           sum.add(neighbor);
           count++;
         }
@@ -52,12 +51,6 @@ export default class Cohesion {
   seek(target, particle) {
     desired.copy(target).sub(particle);
     desired.setLength(this.maxSpeed);
-    const m = 10;
-    if (desired.length() < m) {
-      desired.multiplyScalar(this.maxSpeed * (desired.length() / m));
-    } else {
-      desired.multiplyScalar(this.maxSpeed);
-    }
     steer.copy(desired).sub(particle.getVelocity());
     limit(steer, this.maxForce);
 
