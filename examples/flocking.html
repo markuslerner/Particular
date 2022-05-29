@@ -77,24 +77,20 @@
         maxSpeed: 10,
       };
 
-      const sprite = new THREE.TextureLoader().load('textures/circle.png');
-
-      const material = new THREE.PointsMaterial({
-        size: 3,
-        sizeAttenuation: false,
-        map: sprite,
-        alphaTest: 0.5,
-        transparent: true,
-      });
-
       const mousePosition = new Vector3(-10000, -10000, 0);
       const origin = new Vector3();
+
+      const geometry = new THREE.ConeBufferGeometry(4, 16, 10);
+      geometry.rotateX(Math.PI * 0.5);
+      const material = new THREE.MeshLambertMaterial();
+      const dummy = new THREE.Object3D();
+      const temp = new THREE.Vector3();
+      const color = new THREE.Color(0xffffff);
+      let mesh;
 
       const physics = new SimplePhysics({
         friction: params.friction,
       });
-
-      let vertices = [];
 
       const stats = new Stats();
       stats.dom.style.left = 'auto';
@@ -146,15 +142,12 @@
       avoidMouse.enabled = params.avoidMouse;
 
       const createParticles = () => {
-        vertices = [];
         physics.clear();
 
         for (let i = 0; i < params.count; i++) {
           const x = random(-window.innerWidth / 2, window.innerWidth / 2);
           const y = random(-window.innerHeight / 2, window.innerHeight / 2);
           const z = random(-1, 1);
-
-          vertices.push(x, y, z);
 
           const particle = new Particle(x, y, z);
           particle.radius = 10;
@@ -171,6 +164,12 @@
           particle.addBehavior(bounce);
           particle.addBehavior(wrap);
         }
+
+        if (mesh) {
+          scene.remove(mesh);
+        }
+        mesh = new THREE.InstancedMesh(geometry, material, params.count);
+        scene.add(mesh);
       };
 
       gui.add(params, 'friction', 0.0, 1.0).onChange((v) => {
@@ -214,6 +213,12 @@
 
       const scene = new THREE.Scene();
 
+      scene.add(new THREE.AmbientLight(0x222222));
+
+      const pointLight = new THREE.DirectionalLight(0xffffff, 1);
+      pointLight.position.set(0, 0, 10).normalize();
+      scene.add(pointLight);
+
       const camera = new THREE.PerspectiveCamera(
         30,
         window.innerWidth / window.innerHeight,
@@ -228,12 +233,7 @@
       // );
       // scene.add(cube);
 
-      const geometry = new THREE.BufferGeometry();
-
       createParticles();
-
-      const points = new THREE.Points(geometry, material);
-      scene.add(points);
 
       const animate = (time) => {
         requestAnimationFrame(animate);
@@ -245,18 +245,17 @@
         physics.particles.forEach((particle) => {
           particle.constrainZ(); // Keep on a plane
 
-          vertices[i] = particle.x;
-          vertices[i + 1] = particle.y;
-          vertices[i + 2] = particle.z;
-          i += 3;
+          dummy.position.copy(particle);
+          dummy.lookAt(temp.copy(particle).add(particle.velocitySmooth));
+          dummy.updateMatrix();
+
+          mesh.setMatrixAt(i, dummy.matrix);
+          mesh.setColorAt(i, color);
+
+          i++;
         });
 
-        geometry.setAttribute(
-          'position',
-          new THREE.Float32BufferAttribute(vertices, 3)
-        );
-
-        geometry.attributes.position.needsUpdate = true;
+        mesh.instanceMatrix.needsUpdate = true;
 
         renderer.render(scene, camera);
 
