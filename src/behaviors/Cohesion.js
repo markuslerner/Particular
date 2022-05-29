@@ -32,10 +32,12 @@ export default class Cohesion {
 
     let count = 0;
 
+    const distanceSquared = this.distance * this.distance;
+
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
-        const d = particle.distanceTo(neighbor);
-        if (d > 0 && d < this.distance) {
+        const d = particle.distanceToSquared(neighbor);
+        if (d > 0 && d < distanceSquared) {
           sum.add(neighbor);
           count++;
         }
