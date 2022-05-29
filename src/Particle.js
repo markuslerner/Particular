@@ -10,7 +10,7 @@ import { constrainX, constrainY, constrainZ } from './math/VecUtils.js';
  */
 
 export default class Particle extends Vector3 {
-  constructor(x = 0.0, y = 0.0, z = 0.0, w = 1.0, r = 1.0) {
+  constructor(x = 0.0, y = 0.0, z = 0.0, mass = 1.0, radius = 1.0) {
     super(x, y, z);
 
     this.prev = new Vector3(x, y, z);
@@ -20,8 +20,8 @@ export default class Particle extends Vector3 {
     this.behaviors = null;
     this.neighbors = null;
 
-    this.weight = w;
-    this.radius = r;
+    this.mass = mass;
+    this.radius = radius;
     this.friction = 0;
 
     this.force = new Vector3();
@@ -63,11 +63,6 @@ export default class Particle extends Vector3 {
     return this;
   }
 
-  addVelocity(v) {
-    this.prev.sub(v);
-    return this;
-  }
-
   applyBehaviors() {
     if (this.behaviors != null) {
       this.behaviors.forEach((behavior) => {
@@ -79,11 +74,9 @@ export default class Particle extends Vector3 {
   applyForce(deltaTime) {
     this.temp.copy(this);
 
-    var delta = new Vector3().copy(this);
-    delta
-      .sub(this.prev)
-      .add(this.force.multiplyScalar(this.weight * Math.min(deltaTime, 1)));
-    this.add(delta);
+    const velocity = this.getVelocity();
+    velocity.add(this.force.multiplyScalar(Math.min(deltaTime, 1) / this.mass));
+    this.add(velocity);
 
     this.prev.copy(this.temp);
 
