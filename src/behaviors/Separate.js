@@ -16,6 +16,7 @@ export default class Separate {
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.enabled = true;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -51,6 +52,8 @@ export default class Separate {
       sep.sub(particle.getVelocity());
       limit(sep, this.maxForce);
     }
+
+    sep.multiplyScalar(this.weight);
 
     return sep;
   }

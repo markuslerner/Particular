@@ -15,6 +15,7 @@ export default class Align {
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.enabled = true;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -50,6 +51,9 @@ export default class Align {
       ali.sub(particle.getVelocity());
       limit(ali, this.maxForce);
     }
+
+    ali.multiplyScalar(this.weight);
+
     return ali;
   }
 }

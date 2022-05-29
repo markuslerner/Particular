@@ -18,6 +18,7 @@ export default class Cohesion {
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.enabled = true;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -47,6 +48,7 @@ export default class Cohesion {
       sum.multiplyScalar(1.0 / count);
       return this.seek(sum, particle);
     }
+
     return sum;
   }
 
@@ -55,6 +57,8 @@ export default class Cohesion {
     desired.setLength(this.maxSpeed);
     steer.copy(desired).sub(particle.getVelocity());
     limit(steer, this.maxForce);
+
+    steer.multiplyScalar(this.weight);
 
     return steer;
   }

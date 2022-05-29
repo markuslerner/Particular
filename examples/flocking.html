@@ -76,6 +76,9 @@
         avoidMouse: true,
         maxForce: 2,
         maxSpeed: 10,
+        separateWeight: 1.5,
+        alignWeight: 1,
+        cohesionWeight: 1,
       };
 
       const mousePosition = new Vector3(-10000, -10000, 0);
@@ -125,18 +128,21 @@
         distance: 50,
         maxForce,
         maxSpeed,
+        weight: params.separateWeight,
       });
 
       const align = new Align({
         distance: 100,
         maxForce,
         maxSpeed,
+        weight: params.alignWeight,
       });
 
       const cohesion = new Cohesion({
         distance: 100,
         maxForce,
         maxSpeed,
+        weight: params.cohesionWeight,
       });
 
       const avoidMouse = new Avoid({
@@ -201,10 +207,18 @@
         physics.particles.forEach((particle) => {
           particle.maxSpeed = v;
         });
-        separate.maxSpeed = v;
         align.maxSpeed = v;
         cohesion.maxSpeed = v;
         // avoidMouse.maxSpeed = v;
+      });
+      gui.add(params, 'separateWeight', 0, 2).onChange((v) => {
+        separate.weight = v;
+      });
+      gui.add(params, 'alignWeight', 0, 2).onChange((v) => {
+        align.weight = v;
+      });
+      gui.add(params, 'cohesionWeight', 0, 2).onChange((v) => {
+        cohesion.weight = v;
       });
 
       gui.open();
