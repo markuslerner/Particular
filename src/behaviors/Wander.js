@@ -16,12 +16,12 @@ export default class Wander {
 
   apply(particle) {
     if (this.enabled) {
-      const f = this.wander(particle);
+      const f = this.wander();
       particle.addForce(f);
     }
   }
 
-  wander(particle) {
+  wander() {
     this.wanderDirection.normalize();
     // wanderDirection.cross(upVector, wanderDirection);
 

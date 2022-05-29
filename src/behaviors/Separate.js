@@ -13,7 +13,6 @@ const delta = new Vector3();
 export default class Separate {
   constructor({ distance = 25.0, maxSpeed = 3.0, maxForce = 0.05 } = {}) {
     this.distance = distance;
-    this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.enabled = true;
@@ -28,23 +27,25 @@ export default class Separate {
 
   seperate(particle) {
     const sep = new Vector3();
-    let countSep = 0;
+
+    let count = 0;
+    const distanceSquared = this.distance * this.distance;
 
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
         const d = particle.distanceToSquared(neighbor);
 
         // SEPARATION:
-        if (d < this.distanceSquared && d > 0.0) {
+        if (d < distanceSquared && d > 0.0) {
           delta.copy(particle);
           delta.sub(neighbor);
           delta.setLength(1.0 / d);
           sep.add(delta);
-          countSep++;
+          count++;
         }
         // SEPARATION:
-        if (countSep > 0) {
-          sep.multiplyScalar(1.0 / countSep);
+        if (count > 0) {
+          sep.multiplyScalar(1.0 / count);
         }
         if (sep.lengthSq() > 0) {
           // Implement Reynolds: Steering = Desired - Velocity
@@ -56,14 +57,5 @@ export default class Separate {
     });
 
     return sep;
-  }
-
-  getDistance() {
-    return this.distance;
-  }
-
-  setDistance(distance) {
-    this.distance = distance;
-    this.distanceSquared = this.distance * this.distance;
   }
 }

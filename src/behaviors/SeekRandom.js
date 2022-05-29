@@ -31,18 +31,6 @@ export default class SeekRandom {
     }
   }
 
-  setMin(min) {
-    this.min = min;
-
-    this.setRandomTarget();
-  }
-
-  setMax(max) {
-    this.max = max;
-
-    this.setRandomTarget();
-  }
-
   seek(particle) {
     const desired = new Vector3().copy(this.target);
     desired.sub(particle);

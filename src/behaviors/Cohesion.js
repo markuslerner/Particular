@@ -15,7 +15,6 @@ const steer = new Vector3();
 export default class Cohesion {
   constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 } = {}) {
     this.distance = distance;
-    this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.enabled = true;
@@ -32,10 +31,12 @@ export default class Cohesion {
     sum.set(0, 0, 0);
 
     let count = 0;
+    const distanceSquared = this.distance * this.distance;
+
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
         const d = particle.distanceToSquared(neighbor);
-        if (d > 0 && d < this.distanceSquared) {
+        if (d > 0 && d < distanceSquared) {
           sum.add(neighbor);
           count++;
         }
@@ -61,14 +62,5 @@ export default class Cohesion {
     limit(steer, this.maxForce);
 
     return steer;
-  }
-
-  getDistance() {
-    return this.distance;
-  }
-
-  setDistance(distance) {
-    this.distance = distance;
-    this.distanceSquared = this.distance * this.distance;
   }
 }

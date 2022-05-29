@@ -21,7 +21,6 @@ export default class Particle extends Vector3 {
     this.neighbors = null;
 
     this.weight = w;
-    this.invWeight = 0;
     this.radius = r;
     this.friction = 0;
 
@@ -101,61 +100,8 @@ export default class Particle extends Vector3 {
     return this;
   }
 
-  /**
-   * @return the inverse weight (1/weight)
-   */
-  getInvWeight() {
-    return this.invWeight;
-  }
-
-  /**
-   * Returns the particle's position at the most recent time step.
-   *
-   * @return previous position
-   */
-  getPreviousPosition() {
-    return this.prev;
-  }
-
-  getRadius() {
-    return this.radius;
-  }
-
-  getFriction() {
-    return this.friction;
-  }
-
   getVelocity() {
     return new Vector3().copy(this).sub(this.prev);
-  }
-
-  /**
-   * @return the weight
-   */
-  getWeight() {
-    return this.weight;
-  }
-
-  /**
-   * @return true, if particle is locked
-   */
-  isLocked() {
-    return this.locked;
-  }
-
-  setLocked(locked) {
-    this.locked = locked;
-    return this;
-  }
-
-  /**
-   * Locks/immobilizes particle in space
-   *
-   * @return itself
-   */
-  lock() {
-    this.locked = true;
-    return this;
   }
 
   removeBehavior(behavior) {
@@ -185,37 +131,10 @@ export default class Particle extends Vector3 {
     return this;
   }
 
-  setNeighbors(neighbors) {
-    this.neighbors = new Set(neighbors);
-  }
-
-  setPreviousPosition(position) {
-    this.prev.copy(position);
-    return this;
-  }
-
-  setFriction(friction) {
-    this.friction = friction;
-  }
-
-  setRadius(radius) {
-    this.radius = radius;
-  }
-
   setVelocity(vel) {
     this.prev.copy(this).sub(vel);
   }
 
-  setWeight(w) {
-    this.weight = w;
-    this.invWeight = 1 / w;
-  }
-
-  /**
-   * Unlocks particle again
-   *
-   * @return itself
-   */
   unlock() {
     this.clearVelocity();
     this.locked = false;
@@ -223,7 +142,7 @@ export default class Particle extends Vector3 {
   }
 
   /**
-   * applies Behaviors and Force on the particles position. called automatically inherent from the Vphysics class
+   * applies Behaviors and Force on the particles position. called automatically inherently from the Physics class
    */
   update(deltaTime) {
     if (!this.locked) {

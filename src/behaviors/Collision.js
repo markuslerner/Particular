@@ -28,8 +28,8 @@ export default class Collision {
       let count = 1;
       const radius =
         this.offset === 0.0
-          ? particle.getRadius()
-          : particle.getRadius() * (1.0 - this.offset);
+          ? particle.radius
+          : particle.radius * (1.0 - this.offset);
 
       particle.neighbors.forEach((neighbor) => {
         if (neighbor !== particle && !neighbor.noCollision) {
@@ -38,7 +38,7 @@ export default class Collision {
 
           const dist = delta.length();
 
-          const r = radius + neighbor.getRadius();
+          const r = radius + neighbor.radius;
 
           if (dist < r) {
             const force = delta.setLength((r - dist) / r); // multiplyScalar

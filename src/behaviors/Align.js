@@ -12,7 +12,6 @@ const ali = new Vector3();
 export default class Align {
   constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 } = {}) {
     this.distance = distance;
-    this.distanceSquared = this.distance * this.distance;
     this.maxSpeed = maxSpeed;
     this.maxForce = maxForce;
     this.enabled = true;
@@ -27,21 +26,22 @@ export default class Align {
 
   align(particle) {
     ali.set(0, 0, 0);
-    let countAli = 0;
+    let count = 0;
+    const distanceSquared = this.distance * this.distance;
 
     particle.neighbors.forEach((neighbor) => {
       if (neighbor !== particle) {
         const d = particle.distanceToSquared(neighbor);
 
-        if (d < this.distanceSquared) {
+        if (d < distanceSquared) {
           ali.add(neighbor.getVelocity());
-          countAli++;
+          count++;
         }
       }
     });
 
-    if (countAli > 0) {
-      ali.multiplyScalar(1.0 / countAli);
+    if (count > 0) {
+      ali.multiplyScalar(1.0 / count);
     }
     if (ali.lengthSq() > 0) {
       ali.setLength(this.maxSpeed);
@@ -49,14 +49,5 @@ export default class Align {
       limit(ali, this.maxForce);
     }
     return ali;
-  }
-
-  getDistance() {
-    return this.distance;
-  }
-
-  setDistance(distance) {
-    this.distance = distance;
-    this.distanceSquared = this.distance * this.distance;
   }
 }
