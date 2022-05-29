@@ -14,6 +14,7 @@ export default class Particle extends Vector3 {
     super(x, y, z);
 
     this.velocity = new Vector3();
+    this.velocitySmooth = new Vector3();
 
     this.locked = false;
 
@@ -78,6 +79,8 @@ export default class Particle extends Vector3 {
     );
     this.velocity.limit(this.maxSpeed);
     this.add(this.velocity);
+
+    this.velocitySmooth.lerp(this.velocity, 0.05);
 
     this.force.set(0, 0, 0);
   }
