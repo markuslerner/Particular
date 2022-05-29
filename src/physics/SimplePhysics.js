@@ -241,7 +241,7 @@ export default class SimplePhysics {
 
     if (this.groups !== null) {
       this.groups.forEach((group) => {
-        this.group.update(deltaTime);
+        group.update(deltaTime);
       });
     }
   }
