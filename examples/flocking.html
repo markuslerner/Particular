@@ -57,17 +57,24 @@
         SimplePhysics,
         Align,
         Avoid,
+        Bounce,
         Cohesion,
         Collision,
+        Constrain,
         Separate,
         Vector3,
+        Wrap,
       } from '../src/index.js';
 
       import { random, addMouseListener } from './utils/index.js';
 
       const params = {
-        friction: 0.0,
-        count: 100,
+        friction: 0.9,
+        count: 200,
+        wrap: false,
+        avoidMouse: true,
+        maxForce: 2,
+        maxSpeed: 10,
       };
 
       const sprite = new THREE.TextureLoader().load('textures/circle.png');
@@ -80,9 +87,7 @@
         transparent: true,
       });
 
-      const range = 100;
-
-      const mousePosition = new Vector3(-100, -100, 0);
+      const mousePosition = new Vector3(-10000, -10000, 0);
       const origin = new Vector3();
 
       const physics = new SimplePhysics({
@@ -100,49 +105,101 @@
 
       const gui = new GUI();
 
+      const bounce = new Bounce({
+        min: new Vector3(-window.innerWidth / 2, -window.innerHeight / 2, 0),
+        max: new Vector3(window.innerWidth / 2, window.innerHeight / 2, 0),
+      });
+      bounce.enabled = !params.wrap;
+
+      const wrap = new Wrap({
+        min: bounce.min,
+        max: bounce.max,
+      });
+      wrap.enabled = params.wrap;
+
+      const { maxForce, maxSpeed } = params;
+
+      const separate = new Separate({
+        distance: 50,
+        maxForce,
+        maxSpeed,
+      });
+
+      const align = new Align({
+        distance: 100,
+        maxForce,
+        maxSpeed,
+      });
+
+      const cohesion = new Cohesion({
+        distance: 100,
+        maxForce,
+        maxSpeed,
+      });
+
+      const avoidMouse = new Avoid({
+        target: mousePosition,
+        maxDistance: 100,
+        maxForce: 10,
+        maxSpeed,
+      });
+      avoidMouse.enabled = params.avoidMouse;
+
       const createParticles = () => {
         vertices = [];
         physics.clear();
 
         for (let i = 0; i < params.count; i++) {
-          const x = random(-range, range);
-          const y = random(-range, range);
-          const z = random(-range, range);
+          const x = random(-window.innerWidth / 2, window.innerWidth / 2);
+          const y = random(-window.innerHeight / 2, window.innerHeight / 2);
+          const z = random(-1, 1);
 
           vertices.push(x, y, z);
 
           const particle = new Particle(x, y, z);
           particle.radius = 10;
+          particle.maxSpeed = params.maxSpeed;
           physics.addParticle(particle);
 
-          const maxForce = 0.5;
-          const maxSpeed = 10;
+          // particle.addBehavior(new Collision({ maxForce: 5 }));
+          particle.addBehavior(separate);
+          particle.addBehavior(align);
+          particle.addBehavior(cohesion);
 
-          // particle.addBehavior(new Collision({ maxForce }));
-          particle.addBehavior(
-            new Separate({ distance: 25, maxForce, maxSpeed: maxSpeed * 1.5 })
-          );
-          particle.addBehavior(new Align({ distance: 50, maxForce, maxSpeed }));
-          particle.addBehavior(
-            new Cohesion({ distance: 50, maxForce, maxSpeed })
-          );
+          particle.addBehavior(avoidMouse);
 
-          particle.addBehavior(
-            new Avoid({
-              target: mousePosition,
-              maxDistance: 50,
-              maxForce: 5,
-              maxSpeed: 10,
-            })
-          );
+          particle.addBehavior(bounce);
+          particle.addBehavior(wrap);
         }
       };
 
       gui.add(params, 'friction', 0.0, 1.0).onChange((v) => {
         physics.friction = v;
       });
-      gui.add(params, 'count', 0, 5000).onChange((v) => {
+      gui.add(params, 'count', 0, 1000).onChange((v) => {
         createParticles();
+      });
+      gui.add(params, 'wrap').onChange((v) => {
+        bounce.enabled = !v;
+        wrap.enabled = v;
+      });
+      gui.add(params, 'avoidMouse').onChange((v) => {
+        avoidMouse.enabled = v;
+      });
+      gui.add(params, 'maxForce', 0, 20).onChange((v) => {
+        separate.maxForce = v;
+        align.maxForce = v;
+        cohesion.maxForce = v;
+        // avoidMouse.maxForce = v;
+      });
+      gui.add(params, 'maxSpeed', 0, 20).onChange((v) => {
+        physics.particles.forEach((particle) => {
+          particle.maxSpeed = v;
+        });
+        separate.maxSpeed = v;
+        align.maxSpeed = v;
+        cohesion.maxSpeed = v;
+        // avoidMouse.maxSpeed = v;
       });
 
       gui.open();
@@ -216,6 +273,17 @@
         camera.updateProjectionMatrix();
 
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        bounce.min = wrap.min = new Vector3(
+          -window.innerWidth / 2,
+          -window.innerHeight / 2,
+          0
+        );
+        bounce.max = wrap.max = new Vector3(
+          window.innerWidth / 2,
+          window.innerHeight / 2,
+          0
+        );
       };
 
       handleResize();

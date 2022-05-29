@@ -1,11 +1,14 @@
 import { default as Align } from './behaviors/Align.js';
 import { default as Avoid } from './behaviors/Avoid.js';
+import { default as Bounce } from './behaviors/Bounce.js';
 import { default as Cohesion } from './behaviors/Cohesion.js';
 import { default as Collision } from './behaviors/Collision.js';
+import { default as Constrain } from './behaviors/Constrain.js';
 import { default as Seek } from './behaviors/Seek.js';
 import { default as SeekRandom } from './behaviors/SeekRandom.js';
 import { default as Separate } from './behaviors/Separate.js';
 import { default as Wander } from './behaviors/Wander.js';
+import { default as Wrap } from './behaviors/Wrap.js';
 
 import { default as HashGrid } from './math/HashGrid.js';
 import { default as Math2 } from './math/MathUtils.js';
@@ -17,17 +20,18 @@ import { default as Particle } from './Particle.js';
 import { default as GridPhysics } from './physics/GridPhysics.js';
 import { default as SimplePhysics } from './physics/SimplePhysics.js';
 
-// import { default as WorldBox } from './WorldBox.js'
-
 export {
   Align,
   Avoid,
+  Bounce,
   Cohesion,
   Collision,
+  Constrain,
   Seek,
   SeekRandom,
   Separate,
   Wander,
+  Wrap,
   Math2,
   Quaternion,
   Vector3,
@@ -36,5 +40,4 @@ export {
   GridPhysics,
   SimplePhysics,
   VecUtils,
-  // WorldBox,
 };

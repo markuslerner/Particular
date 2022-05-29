@@ -13,8 +13,8 @@ export default class Particle extends Vector3 {
   constructor(x = 0.0, y = 0.0, z = 0.0, mass = 1.0, radius = 1.0) {
     super(x, y, z);
 
-    this.prev = new Vector3(x, y, z);
-    this.temp = new Vector3();
+    this.velocity = new Vector3();
+
     this.locked = false;
 
     this.behaviors = null;
@@ -23,6 +23,7 @@ export default class Particle extends Vector3 {
     this.mass = mass;
     this.radius = radius;
     this.friction = 0;
+    this.maxSpeed = 3.0;
 
     this.force = new Vector3();
 
@@ -64,7 +65,7 @@ export default class Particle extends Vector3 {
   }
 
   applyBehaviors() {
-    if (this.behaviors != null) {
+    if (this.behaviors !== null) {
       this.behaviors.forEach((behavior) => {
         behavior.apply(this);
       });
@@ -72,13 +73,11 @@ export default class Particle extends Vector3 {
   }
 
   applyForce(deltaTime) {
-    this.temp.copy(this);
-
-    const velocity = this.getVelocity();
-    velocity.add(this.force.multiplyScalar(Math.min(deltaTime, 1) / this.mass));
-    this.add(velocity);
-
-    this.prev.copy(this.temp);
+    this.velocity.add(
+      this.force.multiplyScalar(Math.min(deltaTime, 1) / this.mass)
+    );
+    this.velocity.limit(this.maxSpeed);
+    this.add(this.velocity);
 
     this.force.set(0, 0, 0);
   }
@@ -89,12 +88,12 @@ export default class Particle extends Vector3 {
   }
 
   clearVelocity() {
-    this.prev.copy(this);
+    this.velocity.set(0, 0, 0);
     return this;
   }
 
   getVelocity() {
-    return new Vector3().copy(this).sub(this.prev);
+    return this.velocity;
   }
 
   removeBehavior(behavior) {
@@ -118,14 +117,8 @@ export default class Particle extends Vector3 {
   }
 
   scaleVelocity(scale) {
-    if (scale > 0) {
-      this.prev.lerp(this, 0 + scale);
-    }
+    this.velocity.multiplyScalar(scale);
     return this;
-  }
-
-  setVelocity(vel) {
-    this.prev.copy(this).sub(vel);
   }
 
   unlock() {
@@ -142,7 +135,7 @@ export default class Particle extends Vector3 {
       this.applyBehaviors();
       this.applyForce(deltaTime);
     }
-    this.scaleVelocity(this.friction);
+    this.scaleVelocity(1 - this.friction);
 
     this.followers.forEach((follower) => {
       follower.copy(this);

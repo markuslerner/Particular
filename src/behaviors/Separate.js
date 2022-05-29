@@ -32,26 +32,25 @@ export default class Separate {
       if (neighbor !== particle) {
         const d = particle.distanceTo(neighbor);
 
-        // SEPARATION:
-        if (d < this.distance && d > 0.0) {
+        if (d > 0.0 && d < this.distance) {
           delta.copy(particle);
           delta.sub(neighbor);
           delta.setLength(1.0 / d);
           sep.add(delta);
           count++;
         }
-        // SEPARATION:
-        if (count > 0) {
-          sep.multiplyScalar(1.0 / count);
-        }
-        if (sep.lengthSq() > 0) {
-          // Implement Reynolds: Steering = Desired - Velocity
-          sep.setLength(this.maxSpeed);
-          sep.sub(particle.getVelocity());
-          limit(sep, this.maxForce);
-        }
       }
     });
+
+    if (count > 0) {
+      sep.multiplyScalar(1.0 / count);
+    }
+    if (sep.lengthSq() > 0) {
+      // Implement Reynolds: Steering = Desired - Velocity
+      sep.setLength(this.maxSpeed);
+      sep.sub(particle.getVelocity());
+      limit(sep, this.maxForce);
+    }
 
     return sep;
   }

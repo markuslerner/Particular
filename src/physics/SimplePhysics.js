@@ -10,7 +10,7 @@
  * Default iterations for verlet solver: 50
  */
 export default class SimplePhysics {
-  constructor({ friction = 0.0, springIterationsCount = 50 } = {}) {
+  constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
     this.behaviors = new Set();
     this.constraints = new Set();
     this.groups = new Set();
@@ -195,7 +195,7 @@ export default class SimplePhysics {
    *
    * @param group
    *            to remove
-   * @return true, if the spring has been removed
+   * @return true, if the group has been removed
    */
   removeGroup(group) {
     return this.groups.delete(group);
@@ -216,7 +216,7 @@ export default class SimplePhysics {
         behavior.apply(particle);
       });
 
-      particle.scaleVelocity(this.friction);
+      particle.scaleVelocity(1 - this.friction);
       particle.update(deltaTime);
     });
   }
