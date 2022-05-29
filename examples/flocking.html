@@ -54,6 +54,7 @@
 
       import {
         Particle,
+        GridPhysics,
         SimplePhysics,
         Align,
         Avoid,
@@ -70,7 +71,7 @@
 
       const params = {
         friction: 0.9,
-        count: 200,
+        count: 250,
         wrap: false,
         avoidMouse: true,
         maxForce: 2,
@@ -91,6 +92,11 @@
       const physics = new SimplePhysics({
         friction: params.friction,
       });
+
+      // const physics = new GridPhysics({
+      //   friction: params.friction,
+      //   neighborRange: 100,
+      // });
 
       const stats = new Stats();
       stats.dom.style.left = 'auto';
