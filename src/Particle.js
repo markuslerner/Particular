@@ -1,20 +1,14 @@
-// ported by markuslerner.com from punktiert Processing library:
-// https://github.com/djrkohler/punktiert/tree/master/src/punktiert/physics
-
 import { Vector3 } from './index.js';
 import { constrainX, constrainY, constrainZ } from './math/VecUtils.js';
 
 /**
- * An individual 3D particle for use by the VPhysics and VSpring classes. the functionality can be extended by applying different behaviors </p> this class is
- * more or less an modification/ extension of Karsten Schmidt's toxi.physics.VerletPartcle class
+ * An individual 3D particle for use by the Physics and Spring classes. The functionality can be extended by applying different behaviors
+ * This class is based on of Karsten Schmidt's toxi.physics.VerletPartcle class
  */
 
 export default class Particle extends Vector3 {
   constructor(x = 0.0, y = 0.0, z = 0.0, mass = 1.0, radius = 1.0) {
     super(x, y, z);
-
-    this.velocity = new Vector3();
-    this.velocitySmooth = new Vector3();
 
     this.locked = false;
 
@@ -27,13 +21,12 @@ export default class Particle extends Vector3 {
     this.maxSpeed = 3.0;
 
     this.force = new Vector3();
+    this.velocity = new Vector3();
+    this.velocitySmooth = new Vector3();
 
     this.followers = new Set();
   }
 
-  /**
-   * Adds the given behavior to the list of behaviors applied to this particle at each step.
-   */
   addBehavior(behavior, addEvenIfExists = false) {
     if (this.behaviors === null) {
       this.behaviors = new Set();
@@ -41,18 +34,6 @@ export default class Particle extends Vector3 {
     if (!this.behaviors.has(behavior) || addEvenIfExists) {
       this.behaviors.add(behavior);
     }
-    return this;
-  }
-
-  /**
-   * Adds the given constraint to the list of constraints applied to this particle at each step.
-   * A constraint is applied always wether the particle is locked or not
-   */
-  addConstraint(constraint) {
-    if (this.behaviors === null) {
-      this.behaviors = new Set();
-    }
-    this.behaviors.add(constraint);
     return this;
   }
 
@@ -99,6 +80,11 @@ export default class Particle extends Vector3 {
     return this.velocity;
   }
 
+  scaleVelocity(scale) {
+    this.velocity.multiplyScalar(scale);
+    return this;
+  }
+
   removeBehavior(behavior) {
     if (this.behaviors !== null) {
       const found = this.behaviors.has(behavior);
@@ -119,20 +105,12 @@ export default class Particle extends Vector3 {
     }
   }
 
-  scaleVelocity(scale) {
-    this.velocity.multiplyScalar(scale);
-    return this;
-  }
-
   unlock() {
     this.clearVelocity();
     this.locked = false;
     return this;
   }
 
-  /**
-   * applies Behaviors and Force on the particles position. called automatically inherently from the Physics class
-   */
   update(deltaTime) {
     if (!this.locked) {
       this.applyBehaviors();
