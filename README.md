@@ -42,7 +42,7 @@ Collaborations and improvements are welcome.
 - [All behaviors](https://)
 - [Collision Starfield](https://)
 - [Flocking](https://)
-- [Seek](https://)
+- [Seek/Arrive](https://)
 
 ### API Docs
 
@@ -53,7 +53,7 @@ To be created ...
 - Create 3d flocking example with world box
 - Create distance matrix for speed optimization
 - Add missing behaviors and params to all behaviors example
-- Consider writing Behaviours as a plugin for matter.js
+- Consider writing behaviors as a plugin for matter.js
 - Create other shapes (box, polygon)
 - Create tabular api docs like https://swiperjs.com/swiper-api
 
