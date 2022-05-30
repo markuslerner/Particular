@@ -7,10 +7,7 @@ const steer = new Vector3();
 
 /**
  * Local Particle Behavior: compares the passed in Particle to its own list of neighbors
- *
- * </p> cohesion algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds. Here just the rule of coherence. </p> Java
- * implementation Daniel Shiffman (www.shiffman.net); Jose Sanchez (www.plethora-project.com)
- *
+ * Cohesion algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds. Here just the rule of coherence. </p> Java
  */
 export default class Cohesion {
   constructor({ distance = 50, maxSpeed = 3.0, maxForce = 0.05 } = {}) {

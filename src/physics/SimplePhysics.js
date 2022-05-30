@@ -1,13 +1,11 @@
 /**
  * particle physics engine using Verlet integration </p> based on:
  * http://en.wikipedia.org/wiki/Verlet_integration
- * http://www.teknikus.dk/tj/gdc2001.htm </p> this class is more or less an
- * modification/ extension of Karsten Schmidt's toxi.physics.VerletPhysics
+ * http://www.teknikus.dk/tj/gdc2001.htm </p> this class is more or less a
+ * modification/extension of Karsten Schmidt's toxi.physics.VerletPhysics
  * class, http://toxiclibs.org ; </p> for convenience combined physics for 2D /
  * 3D; some addons for speed; and extended behaviors </p> Written by Daniel
- * Koehler - 2012 www.lab-eds.org for feedback please contact me at:
- * daniel@lab-eds.org
- * Default iterations for verlet solver: 50
+ * Koehler - 2012 www.lab-eds.org
  */
 export default class SimplePhysics {
   constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {

@@ -3,9 +3,7 @@ import { limit } from '../math/VecUtils.js';
 
 /**
  * Local Particle Behavior: compares the passed in Particle to its own list of neighbors
- * </p> addBehavior to the VParticle.behaviors; call each timeStep
- * </p> Seek algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds. Here just the rule of Steering. </p> Java
- * implementation Daniel Shiffman (www.shiffman.net)
+ * Seek algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds
  */
 export default class Seek extends EventTarget {
   constructor({

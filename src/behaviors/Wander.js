@@ -1,7 +1,7 @@
 import Vector3 from '../math/Vector3.js';
 import { limit } from '../math/VecUtils.js';
 
-// basic wander-algorythm
+// Basic wander-algorythm
 
 export default class Wander {
   constructor({ speed = 1.0, maxChange = 1.0, maxForce = 1.0 } = {}) {

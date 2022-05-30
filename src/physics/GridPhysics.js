@@ -1,8 +1,7 @@
-// ported by markuslerner.com from punktiert Processing library:
-// https://github.com/djrkohler/punktiert/tree/master/src/punktiert/physics
-
 import SimplePhysics from './SimplePhysics.js';
 import HashGrid from '../math/HashGrid.js';
+
+// GridPhysics used HashGrid, supposed to be faster than SimplePhysics, but in some cases yields strange results
 
 export default class GridPhysics extends SimplePhysics {
   constructor(props) {

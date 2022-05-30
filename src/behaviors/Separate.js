@@ -5,9 +5,7 @@ const delta = new Vector3();
 
 /**
  * Local Particle Behavior: compares the passed in Particle to its own list of neighbors
- * </p> addBehavior to the VParticle.behaviors;
- * </p> seperation algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds. Here just the rule of seperation. </p> Java
- * implementation Daniel Shiffman (www.shiffman.net); Jose Sanchez (www.plethora-project.com)
+ * Seperation algorythm based on: Craig Reynold's Boids program to simulate the flocking behavior of birds. Here just the rule of seperation.
  */
 
 export default class Separate {

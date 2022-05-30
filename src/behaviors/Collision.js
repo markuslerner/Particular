@@ -4,12 +4,7 @@ import { limit } from '../math/VecUtils.js';
 const delta = new Vector3();
 
 /**
- * Local Particle Behavior: compares the passed in Particle to its own list of
- * neighbors </p> VParticle.neighbors gets automatically updated; selects
- * neighbors in Range: VPhysics.hashGrid.Radius </p> addBehavior to the
- * VParticle.behaviors; call each timeStep
- *
- * </p> Collision Detection based on the VParticle.radius
+ * Collision avoidance: selects neighbors within each others radius
  */
 
 export default class Collision {
