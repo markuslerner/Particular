@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Particular – Seek Example</title>
+    <title>Particular – Seek/Arrive Example</title>
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -13,7 +13,7 @@
     <div id="container"></div>
 
     <div id="title">
-      <h1><a href="./index.html">Particular</a> › Seek Example</h1>
+      <h1><a href="./index.html">Particular</a> › Seek/Arrive Example</h1>
       <p></p>
 
       <ul>
@@ -64,17 +64,18 @@
 
       const params = {
         friction: 0.0,
-        count: 100,
+        count: 1,
       };
 
       const sprite = new THREE.TextureLoader().load('textures/circle.png');
 
       const material = new THREE.PointsMaterial({
-        size: 3,
+        size: 15,
         sizeAttenuation: false,
         map: sprite,
         alphaTest: 0.5,
         transparent: true,
+        vertexColors: true,
       });
 
       const range = 2;
@@ -87,6 +88,7 @@
       });
 
       let vertices = [];
+      let colors = [];
 
       const stats = new Stats();
       stats.dom.style.left = 'auto';
@@ -99,6 +101,7 @@
 
       const createParticles = () => {
         vertices = [];
+        colors = [];
         physics.clear();
 
         for (let i = 0; i < params.count; i++) {
@@ -107,24 +110,32 @@
           const z = random(-range, range);
 
           vertices.push(x, y, z);
+          colors.push(1, 1, 1);
 
           const particle = new Particle(x, y, z);
           physics.addParticle(particle);
 
           particle.addBehavior(new Collision());
 
-          particle.addBehavior(
-            new Seek({
-              target: mousePosition,
-            })
-          );
+          const seek = new Seek({
+            target: mousePosition,
+            arriveEnabled: true,
+          });
+          seek.addEventListener('start', () => {
+            console.log('start');
+          });
+          seek.addEventListener('arrive', () => {
+            console.log('arrive');
+          });
+
+          particle.addBehavior(seek);
         }
       };
 
       gui.add(params, 'friction', 0.0, 1.0).onChange((v) => {
         physics.friction = v;
       });
-      gui.add(params, 'count', 0, 5000).onChange((v) => {
+      gui.add(params, 'count', 0, 1000).onChange((v) => {
         createParticles();
       });
 
@@ -166,6 +177,12 @@
           vertices[i] = particle.x;
           vertices[i + 1] = particle.y;
           vertices[i + 2] = particle.z;
+
+          const b = particle.getBehavior(Seek);
+          colors[i] = b?.arrived ? 0 : 1;
+          colors[i + 1] = 1;
+          colors[i + 2] = b?.arrived ? 0 : 1;
+
           i += 3;
         });
 
@@ -173,8 +190,13 @@
           'position',
           new THREE.Float32BufferAttribute(vertices, 3)
         );
+        geometry.setAttribute(
+          'color',
+          new THREE.Float32BufferAttribute(colors, 3)
+        );
 
         geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
 
         renderer.render(scene, camera);
 
