@@ -37,6 +37,17 @@ export default class Particle extends Vector3 {
     return this;
   }
 
+  getBehavior(behaviorClass) {
+    if (this.behaviors !== null) {
+      for (const behavior of this.behaviors) {
+        if (behavior instanceof behaviorClass) {
+          return behavior;
+        }
+      }
+    }
+    return null;
+  }
+
   addFollower(vector) {
     this.followers.add(vector);
   }
