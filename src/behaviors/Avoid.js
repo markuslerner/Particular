@@ -14,6 +14,7 @@ export default class Avoid {
 
     this.maxDistance = maxDistance;
     this.enabled = true;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -36,6 +37,8 @@ export default class Avoid {
 
     desired.sub(particle.getVelocity());
     limit(desired, this.maxForce);
+
+    if (this.weight !== 1.0) desired.multiplyScalar(this.weight);
 
     return desired;
   }

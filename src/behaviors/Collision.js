@@ -15,6 +15,7 @@ export default class Collision {
     this.offset = offset;
     this.maxForce = maxForce;
     this.enabled = true;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -46,6 +47,8 @@ export default class Collision {
 
       sum.multiplyScalar(1.0 / count);
       limit(sum, this.maxForce);
+
+      if (this.weight !== 1.0) sum.multiplyScalar(this.weight);
 
       particle.addForce(sum);
     }

@@ -50,7 +50,7 @@ export default class Align {
       limit(ali, this.maxForce);
     }
 
-    ali.multiplyScalar(this.weight);
+    if (this.weight !== 1.0) ali.multiplyScalar(this.weight);
 
     return ali;
   }

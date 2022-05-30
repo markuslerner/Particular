@@ -12,6 +12,7 @@ export default class Wander {
     this.wanderVelocity = new Vector3();
     this.wanderDirection = new Vector3();
     this.enabled = true;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -35,6 +36,8 @@ export default class Wander {
     this.wanderVelocity.multiplyScalar(this.speed);
 
     limit(this.wanderVelocity, this.maxForce);
+
+    if (this.weight !== 1.0) this.wanderVelocity.multiplyScalar(this.weight);
 
     return this.wanderVelocity;
   }

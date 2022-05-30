@@ -55,7 +55,7 @@ export default class Cohesion {
     steer.copy(desired).sub(particle.getVelocity());
     limit(steer, this.maxForce);
 
-    steer.multiplyScalar(this.weight);
+    if (this.weight !== 1.0) steer.multiplyScalar(this.weight);
 
     return steer;
   }

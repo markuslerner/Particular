@@ -20,6 +20,7 @@ export default class SeekRandom {
     this.minDistance = minDistance < maxForce ? maxForce : minDistance;
     this.slowDownDistance = slowDownDistance;
     this.enabled = true;
+    this.weight = 1.0;
 
     this.setRandomTarget();
   }
@@ -46,6 +47,8 @@ export default class SeekRandom {
 
     desired.sub(particle.getVelocity());
     limit(desired, this.maxForce);
+
+    if (this.weight !== 1.0) desired.multiplyScalar(this.weight);
 
     return desired;
   }

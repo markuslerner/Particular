@@ -28,6 +28,7 @@ export default class Seek extends EventTarget {
     this.arriveDistance = arriveDistance;
     this.enabled = true;
     this.arrived = false;
+    this.weight = 1.0;
   }
 
   apply(particle) {
@@ -66,6 +67,8 @@ export default class Seek extends EventTarget {
         this.arrived = arrived;
       }
     }
+
+    if (this.weight !== 1.0) desired.multiplyScalar(this.weight);
 
     return desired;
   }

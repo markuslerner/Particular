@@ -51,7 +51,7 @@ export default class Separate {
       limit(sep, this.maxForce);
     }
 
-    sep.multiplyScalar(this.weight);
+    if (this.weight !== 1.0) sep.multiplyScalar(this.weight);
 
     return sep;
   }
