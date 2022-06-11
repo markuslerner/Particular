@@ -1,6 +1,6 @@
 # Particular
 
-[![NPM Package](https://img.shields.io/npm/v/particular.svg?style=flat)](https://www.npmjs.com/package/particular)
+[![NPM Package](https://img.shields.io/npm/v/@markuslerner/particular.svg?style=flat)](https://www.npmjs.com/package/@markuslerner/particular)
 
 Particle system written in JavaScript. Heavily inspired by [Punktiert](https://github.com/djrkohler/punktiert) Java library.
 
@@ -8,29 +8,41 @@ Why yet another physics/particle system libary? I simply didn't find a JavaScrip
 
 Collaborations and improvements are welcome.
 
+### Highlights
+
+- Light-weight
+- No other dependencies
+- Vector3 api fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
+
 ### Hot it works:
 
-1. Create physics:
+1. Include classes from this package:
+
+```
+import { SimplePhysics, Particle, Collision, Seek } from "@markuslerner/particular";
+```
+
+2. Create physics:
 
 ```
 const physics = new SimplePhysics();
 ```
 
-2. Create particle(s) and add to physics:
+3. Create particle(s) and add to physics:
 
 ```
 const particle = new Particle(x, y, z);
 physics.addParticle(particle);
 ```
 
-3. Add behavior(s):
+4. Add behavior(s):
 
 ```
 particle.addBehavior(new Collision());
 particle.addBehavior(new Seek());
 ```
 
-4. Update physics every frame:
+5. Update physics every frame:
 
 ```
 physics.update();
@@ -51,6 +63,8 @@ Collaborations and improvements are welcome.
 
 To be created ...
 
+Vector3 api is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) Vector3.
+
 Available Behaviors:
 
 - Align: align movement with neighbors
@@ -65,8 +79,9 @@ Available Behaviors:
 - Wander: random wander movment
 - Wrap: wrap around word box
 
-### ToDo
+### To Do
 
+- Create 3D flocking example
 - Create distance matrix for speed optimization
 - Add missing behaviors and params to all behaviors example
 - Consider writing behaviors as a plugin for matter.js
