@@ -1,5 +1,5 @@
 {
-  "name": "particular",
+  "name": "@markuslerner/particular",
   "version": "0.1.0",
   "description": "Particle system for JavaScript",
   "type": "module",
@@ -15,9 +15,13 @@
     "url": "git+https://github.com/markuslerner/Particular.git"
   },
   "keywords": [
-    "particle",
+    "particles",
+    "physics",
     "system",
-    "javascript"
+    "behaviors",
+    "vectors",
+    "animation",
+    "simulation"
   ],
   "files": [
     "build/particular.js",
