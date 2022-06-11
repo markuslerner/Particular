@@ -12,7 +12,7 @@ Collaborations and improvements are welcome.
 
 - Light-weight
 - No other dependencies
-- Vector3 api fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
+- Vector3 API is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
 
 ### Hot it works:
 
@@ -54,16 +54,17 @@ Collaborations and improvements are welcome.
 
 ### Examples
 
-- [All behaviors](https://dev.markuslerner.com/particular/index.html)
-- [Collision Starfield](https://dev.markuslerner.com/particular/collision-starfield.html)
-- [Flocking](https://dev.markuslerner.com/particular/flocking.html)
-- [Seek/Arrive](https://dev.markuslerner.com/particular/seek-arrive.html)
+- [All behaviors](https://dev.markuslerner.com/particular/examples/index.html)
+- [Collision Starfield](https://dev.markuslerner.com/particular/examples/collision-starfield.html)
+- [Flocking](https://dev.markuslerner.com/particular/examples/flocking.html)
+- [Seek/Arrive](https://dev.markuslerner.com/particular/examples/seek-arrive.html)
 
 ### API Docs
 
 To be created ...
 
-Vector3 api is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) Vector3.
+- Particle extends Vector3
+- Vector3 API is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) Vector3.
 
 Available Behaviors:
 
