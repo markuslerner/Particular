@@ -17,6 +17,9 @@ export default class SimplePhysics {
 
     this.friction = friction;
     this.springIterationsCount = springIterationsCount;
+
+    this.collisionBatchSize = Infinity;
+    this.collisionStartIndex = 0;
   }
 
   /**
@@ -205,10 +208,15 @@ export default class SimplePhysics {
   updateParticles(deltaTime) {
     // console.log('updateParticles()');
 
+    let count = 0;
     this.particles.forEach((particle) => {
       if (particle.neighbors === null) {
         particle.neighbors = this.particles;
       }
+
+      particle.updateCollisionForce =
+        count >= this.collisionStartIndex &&
+        count < this.collisionStartIndex + this.collisionBatchSize;
 
       this.behaviors.forEach((behavior) => {
         behavior.apply(particle);
@@ -216,7 +224,19 @@ export default class SimplePhysics {
 
       particle.scaleVelocity(1 - this.friction);
       particle.update(deltaTime);
+
+      count++;
     });
+
+    if (this.particles.size > this.collisionBatchSize) {
+      this.collisionStartIndex += this.collisionBatchSize;
+    }
+    if (
+      this.collisionStartIndex >=
+      this.particles.size + this.collisionBatchSize
+    ) {
+      this.collisionStartIndex = 0;
+    }
   }
 
   updateSprings(deltaTime) {
