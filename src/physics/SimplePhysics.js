@@ -8,17 +8,21 @@
  * Koehler - 2012 www.lab-eds.org
  */
 export default class SimplePhysics {
-  constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
+  constructor({
+    friction = 0.95,
+    springIterationsCount = 50,
+    collisionBatchSize = Infinity,
+  } = {}) {
     this.behaviors = new Set();
     this.constraints = new Set();
     this.groups = new Set();
     this.particles = new Set();
     this.springs = new Set();
 
+    this.collisionBatchSize = collisionBatchSize;
     this.friction = friction;
     this.springIterationsCount = springIterationsCount;
 
-    this.collisionBatchSize = Infinity;
     this.collisionStartIndex = 0;
   }
 
