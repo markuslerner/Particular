@@ -66,6 +66,7 @@
         Vector3,
         Wrap,
       } from '../build/particular.js';
+      // } from '../src/index.js';
 
       import { random, addMouseListener } from './utils/index.js';
 
@@ -187,7 +188,7 @@
       gui.add(params, 'friction', 0.0, 1.0).onChange((v) => {
         physics.friction = v;
       });
-      gui.add(params, 'count', 0, 1000).onChange((v) => {
+      gui.add(params, 'count', 0, 2000).onChange((v) => {
         createParticles();
       });
       gui.add(params, 'wrap').onChange((v) => {

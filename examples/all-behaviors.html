@@ -103,8 +103,8 @@
         Separate,
         Wander,
         Vector3,
-        // } from '../build/particular.js';
-      } from '../src/index.js';
+      } from '../build/particular.js';
+      // } from '../src/index.js';
 
       import { random, addMouseListener } from './utils/index.js';
 
@@ -120,6 +120,7 @@
       const params = {
         friction: 0.98,
         count: 2000,
+        collisionBatchSize: 300,
         sizeMin: 0.2,
         sizeMax: 0.2,
         opacity: 0.8,
@@ -151,6 +152,7 @@
 
       const physics = new SimplePhysics({
         friction: params.friction,
+        collisionBatchSize: params.collisionBatchSize,
       });
 
       let scales = [];
@@ -348,6 +350,9 @@
       });
       gui.add(params, 'count', 0, 5000).onChange((v) => {
         createParticles();
+      });
+      gui.add(params, 'collisionBatchSize', 0, 500).onChange((v) => {
+        physics.collisionBatchSize = v;
       });
       gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {
         updateSizes();
