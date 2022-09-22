@@ -351,7 +351,7 @@
       gui.add(params, 'count', 0, 5000).onChange((v) => {
         createParticles();
       });
-      gui.add(params, 'collisionBatchSize', 0, 500).onChange((v) => {
+      gui.add(params, 'collisionBatchSize', 0, 5000).onChange((v) => {
         physics.collisionBatchSize = v;
       });
       gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {

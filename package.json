@@ -1,6 +1,6 @@
 {
   "name": "@markuslerner/particular",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Particle system for JavaScript",
   "type": "module",
   "module": "./build/particular.js",

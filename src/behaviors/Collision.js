@@ -24,7 +24,7 @@ export default class Collision {
       if (particle.updateCollisionForce) {
         this.force.set(0, 0, 0);
 
-        let count = 1;
+        let count = 0;
         const radius =
           this.offset === 0.0
             ? particle.radius
@@ -48,10 +48,12 @@ export default class Collision {
           }
         });
 
-        this.force.multiplyScalar(1.0 / count);
-        limit(this.force, this.maxForce);
+        if (count > 0) {
+          this.force.multiplyScalar(1.0 / count);
+          limit(this.force, this.maxForce);
 
-        if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
+          if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
+        }
       }
 
       particle.addForce(this.force);
