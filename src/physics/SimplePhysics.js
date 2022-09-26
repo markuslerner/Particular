@@ -94,11 +94,11 @@ export default class SimplePhysics {
    * @return spring instance, or null if not found
    */
   getSpring(a, b) {
-    this.springs.forEach((s) => {
+    for (const s of this.springs) {
       if ((s.a === a && s.b === b) || (s.a === b && s.b === a)) {
         return s;
       }
-    });
+    }
     return null;
   }
 
@@ -111,11 +111,11 @@ export default class SimplePhysics {
   getnumConnected(spring) {
     let count = 0;
     if (this.springs != null) {
-      this.springs.forEach((s) => {
+      for (const s of this.springs) {
         if (s.a === spring || s.b === spring) {
           count++;
         }
-      });
+      }
     }
     return count;
   }
@@ -213,7 +213,8 @@ export default class SimplePhysics {
     // console.log('updateParticles()');
 
     let count = 0;
-    this.particles.forEach((particle) => {
+
+    for (const particle of this.particles) {
       if (particle.neighbors === null) {
         particle.neighbors = this.particles;
       }
@@ -222,15 +223,15 @@ export default class SimplePhysics {
         count >= this.collisionStartIndex &&
         count < this.collisionStartIndex + this.collisionBatchSize;
 
-      this.behaviors.forEach((behavior) => {
+      for (const behavior of this.behaviors) {
         behavior.apply(particle);
-      });
+      }
 
       particle.scaleVelocity(1 - this.friction);
       particle.update(deltaTime);
 
       count++;
-    });
+    }
 
     if (this.particles.size > this.collisionBatchSize) {
       this.collisionStartIndex += this.collisionBatchSize;
@@ -246,9 +247,9 @@ export default class SimplePhysics {
   updateSprings(deltaTime) {
     if (this.springs !== null) {
       for (let i = this.springIterationsCount; i > 0; i--) {
-        this.springs.forEach((spring) => {
-          spring.update(deltaTime);
-        });
+        for (const s of this.springs) {
+          s.update(deltaTime);
+        }
       }
     }
   }
@@ -262,28 +263,28 @@ export default class SimplePhysics {
     this.updateSprings(deltaTime);
 
     if (this.groups !== null) {
-      this.groups.forEach((group) => {
+      for (const group of this.groups) {
         group.update(deltaTime);
-      });
+      }
     }
   }
 
   returnIfConstrained(particle) {
-    this.constraints.forEach((constraint) => {
+    for (const constraint of this.constraints) {
       if (particle.equalsWithTolerance(constraint, 0.1)) {
         return constraint;
       }
-    });
+    }
 
     return this.returnIfDuplicate(particle);
   }
 
   returnIfDuplicate(particle) {
-    this.particles.forEach((particle2) => {
+    for (const particle2 of this.particles) {
       if (particle === particle2) {
         return particle2;
       }
-    });
+    }
     this.particles.add(particle);
     return particle;
   }

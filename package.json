@@ -1,6 +1,6 @@
 {
   "name": "@markuslerner/particular",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Particle system for JavaScript",
   "type": "module",
   "module": "./build/particular.js",
@@ -47,5 +47,6 @@
     "eslint-config-prettier": "^8.4.0",
     "local-web-server": "^5.1.1",
     "prettier": "^2.6.2"
-  }
+  },
+  "dependencies": {}
 }

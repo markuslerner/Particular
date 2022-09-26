@@ -59,9 +59,9 @@ export default class Particle extends Vector3 {
 
   applyBehaviors() {
     if (this.behaviors !== null) {
-      this.behaviors.forEach((behavior) => {
+      for (const behavior of this.behaviors) {
         behavior.apply(this);
-      });
+      }
     }
   }
 
@@ -129,9 +129,9 @@ export default class Particle extends Vector3 {
     }
     this.scaleVelocity(1 - this.friction);
 
-    this.followers.forEach((follower) => {
+    for (const follower of this.followers) {
       follower.copy(this);
-    });
+    }
   }
 
   equalsWithTolerance(v, tolerance) {

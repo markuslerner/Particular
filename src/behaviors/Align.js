@@ -29,7 +29,7 @@ export default class Align {
 
     const distanceSquared = this.distance * this.distance;
 
-    particle.neighbors.forEach((neighbor) => {
+    for (const neighbor of particle.neighbors) {
       if (neighbor !== particle) {
         const d = particle.distanceToSquared(neighbor);
 
@@ -38,7 +38,7 @@ export default class Align {
           count++;
         }
       }
-    });
+    }
 
     if (count > 0) {
       ali.multiplyScalar(1.0 / count);

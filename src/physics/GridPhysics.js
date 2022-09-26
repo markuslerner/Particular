@@ -39,11 +39,11 @@ export default class GridPhysics extends SimplePhysics {
 
     this.neighborsCountAverage = 0;
 
-    this.particles.forEach((particle) => {
+    for (const particle of this.particles) {
       particle.neighbors = this.hashgrid.check(particle);
 
       this.neighborsCountAverage += particle.neighbors.size;
-    });
+    }
 
     this.neighborsCountAverage /= this.particles.size;
     this.neighborsCountAverage = Math.round(this.neighborsCountAverage);

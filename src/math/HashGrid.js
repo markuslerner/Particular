@@ -45,9 +45,10 @@ export default class HashGrid {
 
   updateAll() {
     this.H.clear();
-    this.particles.forEach((particle) => {
+
+    for (const particle of particle.particles) {
       this.insert(particle);
-    });
+    }
 
     // console.log(this.particles.size);
     // console.log(this.H.toJS());

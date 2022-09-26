@@ -30,7 +30,7 @@ export default class Collision {
             ? particle.radius
             : particle.radius * (1.0 - this.offset);
 
-        particle.neighbors.forEach((neighbor) => {
+        for (const neighbor of particle.neighbors) {
           if (neighbor !== particle && !neighbor.noCollision) {
             delta.copy(particle);
             delta.sub(neighbor);
@@ -46,7 +46,7 @@ export default class Collision {
               count++;
             }
           }
-        });
+        }
 
         if (count > 0) {
           this.force.multiplyScalar(1.0 / count);
