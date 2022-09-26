@@ -35,14 +35,14 @@ export default class Collision {
             delta.copy(particle);
             delta.sub(neighbor);
 
-            const dist = delta.length();
+            const distSq = delta.lengthSq();
 
             const r = radius + neighbor.radius;
 
-            if (dist < r) {
-              const force = delta.setLength((r - dist) / r); // multiplyScalar
+            if (distSq < r * r) {
+              delta.setLength((r - Math.sqrt(distSq)) / r); // multiplyScalar
 
-              this.force.add(force);
+              this.force.add(delta);
               count++;
             }
           }
