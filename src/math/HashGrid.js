@@ -46,7 +46,7 @@ export default class HashGrid {
   updateAll() {
     this.H.clear();
 
-    for (const particle of particle.particles) {
+    for (const particle of this.particles) {
       this.insert(particle);
     }
 
