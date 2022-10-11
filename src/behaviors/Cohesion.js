@@ -32,7 +32,9 @@ export default class Cohesion {
 
     const distanceSquared = this.distance * this.distance;
 
-    for (const neighbor of particle.neighbors) {
+    for (let i = 0; i < particle.neighbors.length; i++) {
+      const neighbor = particle.neighbors[i];
+
       if (neighbor !== particle) {
         const d = particle.distanceToSquared(neighbor);
         if (d > 0 && d < distanceSquared) {
