@@ -16,7 +16,7 @@ export default class SimplePhysics {
     this.behaviors = new Set();
     this.constraints = new Set();
     this.groups = new Set();
-    this.particles = new Set();
+    this.particles = [];
     this.springs = new Set();
 
     this.collisionBatchSize = collisionBatchSize;
@@ -75,7 +75,7 @@ export default class SimplePhysics {
   }
 
   clear() {
-    this.particles.clear();
+    this.particles = [];
     this.springs.clear();
     return this;
   }
@@ -133,7 +133,7 @@ export default class SimplePhysics {
   }
 
   hasParticle(particle) {
-    return this.particles.has(particle);
+    return this.particles.includes(particle);
   }
 
   hasSpring(spring) {
@@ -166,7 +166,7 @@ export default class SimplePhysics {
    * @return true, if removed successfully
    */
   removeParticle(particle) {
-    return this.particles.delete(particle);
+    return this.particles.filter((p) => p !== particle);
   }
 
   /**
@@ -214,7 +214,9 @@ export default class SimplePhysics {
 
     let count = 0;
 
-    for (const particle of this.particles) {
+    for (var i = 0; i < this.particles.length; i++) {
+      const particle = this.particles[i];
+
       if (particle.neighbors === null) {
         particle.neighbors = this.particles;
       }
@@ -233,12 +235,12 @@ export default class SimplePhysics {
       count++;
     }
 
-    if (this.particles.size > this.collisionBatchSize) {
+    if (this.particles.length > this.collisionBatchSize) {
       this.collisionStartIndex += this.collisionBatchSize;
     }
     if (
       this.collisionStartIndex >=
-      this.particles.size + this.collisionBatchSize
+      this.particles.length + this.collisionBatchSize
     ) {
       this.collisionStartIndex = 0;
     }
@@ -280,12 +282,14 @@ export default class SimplePhysics {
   }
 
   returnIfDuplicate(particle) {
-    for (const particle2 of this.particles) {
+    for (var i = 0; i < this.particles.length; i++) {
+      const particle2 = this.particles[i];
+
       if (particle === particle2) {
         return particle2;
       }
     }
-    this.particles.add(particle);
+    this.particles.push(particle);
     return particle;
   }
 }
