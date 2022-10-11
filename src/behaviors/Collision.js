@@ -30,7 +30,7 @@ export default class Collision {
             ? particle.radius
             : particle.radius * (1.0 - this.offset);
 
-        for (var i = 0; i < particle.neighbors.length; i++) {
+        for (let i = 0; i < particle.neighbors.length; i++) {
           const neighbor = particle.neighbors[i];
 
           if (neighbor !== particle && !neighbor.noCollision) {
