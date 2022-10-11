@@ -29,9 +29,7 @@ export default class Align {
 
     const distanceSquared = this.distance * this.distance;
 
-    for (let i = 0; i < particle.neighbors.length; i++) {
-      const neighbor = particle.neighbors[i];
-
+    for (const neighbor of particle.neighbors) {
       if (neighbor !== particle) {
         const d = particle.distanceToSquared(neighbor);
 

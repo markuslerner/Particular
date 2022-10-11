@@ -28,9 +28,7 @@ export default class Separate {
     const sep = new Vector3();
     let count = 0;
 
-    for (let i = 0; i < particle.neighbors.length; i++) {
-      const neighbor = particle.neighbors[i];
-
+    for (const neighbor of particle.neighbors) {
       if (neighbor !== particle) {
         const d = particle.distanceTo(neighbor);
 

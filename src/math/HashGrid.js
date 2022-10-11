@@ -6,7 +6,7 @@ export default class HashGrid {
   constructor({ neighborRange = 100 } = {}) {
     this.neighborRange = neighborRange;
     this.H = new Map();
-    this.particles = [];
+    this.particles = new Set();
   }
 
   getXr(pos) {
@@ -22,13 +22,13 @@ export default class HashGrid {
   }
 
   add(particle) {
-    this.particles.push(particle);
+    this.particles.add(particle);
     this.insert(particle);
   }
 
   clear() {
     this.H.clear();
-    this.particles = [];
+    this.particles.clear();
   }
 
   insert(particle) {
@@ -46,9 +46,7 @@ export default class HashGrid {
   updateAll() {
     this.H.clear();
 
-    for (let i = 0; i < this.particles.length; i++) {
-      const particle = this.particles[i];
-
+    for (const particle of particle.particles) {
       this.insert(particle);
     }
 
@@ -84,13 +82,13 @@ export default class HashGrid {
       }
     }
 
-    return checked;
+    return new Set(checked);
   }
 
-  delete(particle) {
-    const hashKey = this.getKey(particle);
+  delete(p) {
+    const hashKey = this.getKey(p);
     this.H.delete(hashKey);
-    this.particles.filter((p) => p !== particle);
+    this.particles.delete(p);
   }
 
   size() {

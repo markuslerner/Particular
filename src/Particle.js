@@ -14,7 +14,6 @@ export default class Particle extends Vector3 {
 
     this.behaviors = null;
     this.neighbors = null;
-    this.followers = null;
 
     this.mass = mass;
     this.radius = radius;
@@ -24,14 +23,16 @@ export default class Particle extends Vector3 {
     this.force = new Vector3();
     this.velocity = new Vector3();
     this.velocitySmooth = new Vector3();
+
+    this.followers = new Set();
   }
 
   addBehavior(behavior, addEvenIfExists = false) {
     if (this.behaviors === null) {
-      this.behaviors = [];
+      this.behaviors = new Set();
     }
-    if (!this.behaviors.includes(behavior) || addEvenIfExists) {
-      this.behaviors.push(behavior);
+    if (!this.behaviors.has(behavior) || addEvenIfExists) {
+      this.behaviors.add(behavior);
     }
     return this;
   }
@@ -48,11 +49,7 @@ export default class Particle extends Vector3 {
   }
 
   addFollower(vector) {
-    if (this.followers === null) {
-      this.followers = [];
-    }
-
-    this.followers.push(vector);
+    this.followers.add(vector);
   }
 
   addForce(force) {
@@ -62,9 +59,7 @@ export default class Particle extends Vector3 {
 
   applyBehaviors() {
     if (this.behaviors !== null) {
-      for (let i = 0; i < this.behaviors.length; i++) {
-        const behavior = this.behaviors[i];
-
+      for (const behavior of this.behaviors) {
         behavior.apply(this);
       }
     }
@@ -103,18 +98,18 @@ export default class Particle extends Vector3 {
 
   removeBehavior(behavior) {
     if (this.behaviors !== null) {
-      const found = this.behaviors.includes(behavior);
-      this.behaviors = this.behaviors.filter((b) => b !== behavior);
+      const found = this.behaviors.has(behavior);
+      this.behaviors.delete(behavior);
       return found;
     } else {
       return false;
     }
   }
 
-  removeFollower(follower) {
+  removeFollower(vector) {
     if (this.followers !== null) {
-      const found = this.followers.includes(follower);
-      this.followers = this.followers.filter((f) => f !== follower);
+      const found = this.followers.has(vector);
+      this.followers.delete(vector);
       return found;
     } else {
       return false;
@@ -134,12 +129,8 @@ export default class Particle extends Vector3 {
     }
     this.scaleVelocity(1 - this.friction);
 
-    if (this.followers !== null) {
-      for (let i = 0; i < this.followers.length; i++) {
-        const follower = this.followers[i];
-
-        follower.copy(this);
-      }
+    for (const follower of this.followers) {
+      follower.copy(this);
     }
   }
 
