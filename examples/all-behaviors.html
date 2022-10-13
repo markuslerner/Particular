@@ -95,7 +95,7 @@
 
       import {
         Particle,
-        SimplePhysics,
+        GPUPhysics,
         Avoid,
         Collision,
         Seek,
@@ -119,7 +119,7 @@
 
       const params = {
         friction: 0.98,
-        count: 2000,
+        count: 20,
         collisionBatchSize: 2000,
         sizeMin: 0.2,
         sizeMax: 0.2,
@@ -150,7 +150,7 @@
 
       const avoidTarget = new Vector3();
 
-      const physics = new SimplePhysics({
+      const physics = new GPUPhysics({
         friction: params.friction,
         collisionBatchSize: params.collisionBatchSize,
       });
