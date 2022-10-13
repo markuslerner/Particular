@@ -18,6 +18,7 @@ import { default as VecUtils } from './math/VecUtils.js';
 
 import { default as Particle } from './Particle.js';
 import { default as GridPhysics } from './physics/GridPhysics.js';
+import { default as GPUPhysics } from './physics/GPUPhysics.js';
 import { default as SimplePhysics } from './physics/SimplePhysics.js';
 
 export {
@@ -38,6 +39,7 @@ export {
   HashGrid,
   Particle,
   GridPhysics,
+  GPUPhysics,
   SimplePhysics,
   VecUtils,
 };
