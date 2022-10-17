@@ -31,7 +31,7 @@ let elements = [
   // ... 100k elements
 ];
 
-const gpu = new GPU({ mode: 'gpu' }); // { mode: 'cpu' }
+const gpu = new GPU({ mode: 'cpu' }); // { mode: 'cpu' }
 // gpu.addFunction(distance, {
 //   argumentTypes: {
 //     a: 'Array(3)',
@@ -99,24 +99,20 @@ export default class GPUPhysics extends SimplePhysics {
 
     this.calculateDistanceMap = gpu.createKernel(
       function kernelFunction(e) {
+        // return distance(e[this.thread.x], e[this.thread.y]);
+
+        const i = this.thread.x * 3;
+        const j = this.thread.y * 3;
+
         return distance2(
-          e[this.thread.x][0],
-          e[this.thread.x][1],
-          e[this.thread.x][2],
+          e[i],
+          e[i + 1],
+          e[i + 2],
 
-          e[this.thread.y][0],
-          e[this.thread.y][1],
-          e[this.thread.y][2]
+          e[j],
+          e[j + 1],
+          e[j + 2]
         );
-
-        // return Math.sqrt(
-        //   (e[this.thread.x][0] - e[this.thread.y][0]) *
-        //     (e[this.thread.x][0] - e[this.thread.y][0]) +
-        //     (e[this.thread.x][1] - e[this.thread.y][1]) *
-        //       (e[this.thread.x][1] - e[this.thread.y][1]) +
-        //     (e[this.thread.x][2] - e[this.thread.y][2]) *
-        //       (e[this.thread.x][2] - e[this.thread.y][2])
-        // );
       },
       {
         // dynamicArguments: true,
@@ -152,10 +148,22 @@ export default class GPUPhysics extends SimplePhysics {
     //   index++;
     // }+
 
-    const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
+    // const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
+    const positions = [...this.particles].reduce((accumulator, p) => {
+      accumulator.push(p.x);
+      accumulator.push(p.y);
+      accumulator.push(p.z);
+      return accumulator;
+    }, []);
+
     // console.log(particles.length);
-    const distanceMap = this.calculateDistanceMap(particles);
+    // const distanceMap = this.calculateDistanceMap(particles);
     // console.log(distanceMap);
+
+    const distanceMap = this.calculateDistanceMap(positions);
+    // console.log(distanceMap);
+
     super.updateParticles(deltaTime, distanceMap);
+    // super.updateParticles(deltaTime);
   }
 }
