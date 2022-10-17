@@ -17,6 +17,12 @@ function distance(a, b) {
   let dz = a[2] - b[2];
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
+function distance2(x1, y1, z1, x2, y2, z2) {
+  let dx = x1 - x2;
+  let dy = y1 - y2;
+  let dz = z1 - z2;
+  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+}
 let elements = [
   [1, 1, 0],
   [2, 2, 2],
@@ -25,8 +31,16 @@ let elements = [
   // ... 100k elements
 ];
 
-const gpu = new GPU({ mode: 'cpu' }); // { mode: 'cpu' }
-gpu.addFunction(distance, {
+const gpu = new GPU({ mode: 'gpu' }); // { mode: 'cpu' }
+// gpu.addFunction(distance, {
+//   argumentTypes: {
+//     a: 'Array(3)',
+//     b: 'Array(3)',
+//   },
+//   returnType: 'Float',
+// });
+
+gpu.addFunction(distance2, {
   // argumentTypes: {
   //   a: 'Array(3)',
   //   b: 'Array(3)',
@@ -34,7 +48,7 @@ gpu.addFunction(distance, {
   returnType: 'Float',
 });
 
-// const kernelMap = gpu.createKernel(
+// const kernel = gpu.createKernel(
 //   function kernelFunction(elems) {
 //     return distance(elems[this.thread.x], elems[this.thread.y]);
 //   },
@@ -44,34 +58,34 @@ gpu.addFunction(distance, {
 //   }
 // );
 
-const kernelMap = gpu
-  .createKernel(function (e) {
-    // let dx = a[0] - b[0];
-    // let dy = a[1] - b[1];
-    // let dz = a[2] - b[2];
+// const kernel = gpu
+//   .createKernel(function (e) {
+//     // let dx = a[0] - b[0];
+//     // let dy = a[1] - b[1];
+//     // let dz = a[2] - b[2];
+//
+//     // let sum = 0;
+//     // for (let i = 0; i < 512; i++) {
+//     //   sum += e[this.thread.x][0] * e[this.thread.y][0];
+//     // }
+//     // return sum;
+//
+//     // return e[this.thread.x][0] - e[this.thread.y][0];
+//
+//     return Math.sqrt(
+//       (e[this.thread.x][0] - e[this.thread.y][0]) *
+//         (e[this.thread.x][0] - e[this.thread.y][0]) +
+//         (e[this.thread.x][1] - e[this.thread.y][1]) *
+//           (e[this.thread.x][1] - e[this.thread.y][1]) +
+//         (e[this.thread.x][2] - e[this.thread.y][2]) *
+//           (e[this.thread.x][2] - e[this.thread.y][2])
+//     );
+//
+//     // return x + y; // Math.sqrt(dx * dx + dy * dy + dz * dz);
+//   })
+//   .setOutput([elements.length, elements.length]);
 
-    // let sum = 0;
-    // for (let i = 0; i < 512; i++) {
-    //   sum += e[this.thread.x][0] * e[this.thread.y][0];
-    // }
-    // return sum;
-
-    // return e[this.thread.x][0] - e[this.thread.y][0];
-
-    return Math.sqrt(
-      (e[this.thread.x][0] - e[this.thread.y][0]) *
-        (e[this.thread.x][0] - e[this.thread.y][0]) +
-        (e[this.thread.x][1] - e[this.thread.y][1]) *
-          (e[this.thread.x][1] - e[this.thread.y][1]) +
-        (e[this.thread.x][2] - e[this.thread.y][2]) *
-          (e[this.thread.x][2] - e[this.thread.y][2])
-    );
-
-    // return x + y; // Math.sqrt(dx * dx + dy * dy + dz * dz);
-  })
-  .setOutput([elements.length, elements.length]);
-
-// const result = kernelMap(elements);
+// const result = kernel(elements);
 // console.log(result);
 
 export default class GPUPhysics extends SimplePhysics {
@@ -81,11 +95,19 @@ export default class GPUPhysics extends SimplePhysics {
     } = props;
     super(props);
 
-    this.buffersize = 2000;
+    this.buffersize = 1000;
 
     this.calculateDistanceMap = gpu.createKernel(
       function kernelFunction(e) {
-        return distance(e[this.thread.x], e[this.thread.y]);
+        return distance2(
+          e[this.thread.x][0],
+          e[this.thread.x][1],
+          e[this.thread.x][2],
+
+          e[this.thread.y][0],
+          e[this.thread.y][1],
+          e[this.thread.y][2]
+        );
 
         // return Math.sqrt(
         //   (e[this.thread.x][0] - e[this.thread.y][0]) *
@@ -97,8 +119,11 @@ export default class GPUPhysics extends SimplePhysics {
         // );
       },
       {
-        dynamicArguments: true,
+        // dynamicArguments: true,
         output: [this.buffersize, this.buffersize],
+        precision: 'single',
+        optimizeFloatMemory: true,
+        tactic: 'speed',
       }
     );
   }
@@ -125,11 +150,12 @@ export default class GPUPhysics extends SimplePhysics {
     //     index2++;
     //   }
     //   index++;
-    // }
+    // }+
+
     const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
     // console.log(particles.length);
     const distanceMap = this.calculateDistanceMap(particles);
-    // console.log(d);
+    // console.log(distanceMap);
     super.updateParticles(deltaTime, distanceMap);
   }
 }

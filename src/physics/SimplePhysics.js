@@ -224,11 +224,11 @@ export default class SimplePhysics {
         index < this.collisionStartIndex + this.collisionBatchSize;
 
       for (const behavior of this.behaviors) {
-        behavior.apply(particle, index, distanceMap);
+        behavior.apply(particle, index, distanceMap && distanceMap[index]);
       }
 
       particle.scaleVelocity(1 - this.friction);
-      particle.update(deltaTime, index, distanceMap);
+      particle.update(deltaTime, index, distanceMap && distanceMap[index]);
 
       index++;
     }

@@ -37,9 +37,7 @@ export default class Collision {
             delta.sub(neighbor);
 
             // const dist = delta.length();
-            const dist = distanceMap
-              ? distanceMap[index][index2]
-              : delta.length();
+            const dist = distanceMap ? distanceMap[index2] : delta.length();
 
             const r = radius + neighbor.radius;
 
