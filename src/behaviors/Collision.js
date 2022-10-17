@@ -19,44 +19,50 @@ export default class Collision {
     this.force = new Vector3();
   }
 
-  apply(particle, index, distanceMap = undefined) {
+  apply(particle, index, force = undefined) {
     if (this.enabled) {
-      if (particle.updateCollisionForce) {
-        this.force.set(0, 0, 0);
+      if (force) {
+        this.force.x = force[0];
+        this.force.y = force[1];
+        this.force.z = force[2];
 
-        let count = 0;
-        const radius =
-          this.offset === 0.0
-            ? particle.radius
-            : particle.radius * (1.0 - this.offset);
+        limit(this.force, this.maxForce);
 
-        let index2 = 0;
-        for (const neighbor of particle.neighbors) {
-          if (neighbor !== particle && !neighbor.noCollision) {
-            delta.copy(particle);
-            delta.sub(neighbor);
+        if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
+      } else {
+        if (particle.updateCollisionForce) {
+          this.force.set(0, 0, 0);
 
-            // const dist = delta.length();
-            const dist = distanceMap ? distanceMap[index2] : delta.length();
+          let count = 0;
+          const radius =
+            this.offset === 0.0
+              ? particle.radius
+              : particle.radius * (1.0 - this.offset);
 
-            const r = radius + neighbor.radius;
+          for (const neighbor of particle.neighbors) {
+            if (neighbor !== particle && !neighbor.noCollision) {
+              delta.copy(particle);
+              delta.sub(neighbor);
 
-            if (dist < r) {
-              delta.setLength((r - dist) / r); // multiplyScalar
+              const dist = delta.length();
 
-              this.force.add(delta);
-              count++;
+              const r = radius + neighbor.radius;
+
+              if (dist < r) {
+                delta.setLength((r - dist) / r); // multiplyScalar
+
+                this.force.add(delta);
+                count++;
+              }
             }
           }
 
-          index2++;
-        }
+          if (count > 0) {
+            this.force.multiplyScalar(1.0 / count);
+            limit(this.force, this.maxForce);
 
-        if (count > 0) {
-          this.force.multiplyScalar(1.0 / count);
-          limit(this.force, this.maxForce);
-
-          if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
+            if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
+          }
         }
       }
 
