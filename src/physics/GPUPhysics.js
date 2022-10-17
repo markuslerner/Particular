@@ -28,83 +28,86 @@ gpu.addFunction(setLength2, {
 });
 
 export default class GPUPhysics extends SimplePhysics {
-  constructor(props) {
-    const {
-      buffersize = 1024, // max number of particles
-    } = props;
-    super(props);
+  updateParticles(deltaTime) {
+    if (this.particlesCount !== this.particles.size) {
+      this.calculateCollisionForce = gpu.createKernel(
+        function kernelFunction(e, size) {
+          // return distance(e[this.thread.x], e[this.thread.y]);
 
-    this.buffersize = 4000;
+          let x = 0;
+          let y = 0;
+          let z = 0;
+          let count = 0;
 
-    this.calculateCollisionForce = gpu.createKernel(
-      function kernelFunction(e) {
-        // return distance(e[this.thread.x], e[this.thread.y]);
+          for (let j = 0; j < size; j++) {
+            // sum += a[this.thread.y][i] * b[i][this.thread.x];
 
-        let x = 0;
-        let y = 0;
-        let z = 0;
-        let count = 0;
+            const dist = distance2(
+              e[this.thread.x][0],
+              e[this.thread.x][1],
+              e[this.thread.x][2],
+              e[j][0],
+              e[j][1],
+              e[j][2]
+            );
 
-        for (let j = 0; j < 4000; j++) {
-          // sum += a[this.thread.y][i] * b[i][this.thread.x];
+            // // const r = p1.radius + p2.radius;
+            const r = 1;
 
-          const dist = distance2(
-            e[this.thread.x][0],
-            e[this.thread.x][1],
-            e[this.thread.x][2],
-            e[j][0],
-            e[j][1],
-            e[j][2]
-          );
+            if (dist < r && dist > 0) {
+              const delta = [
+                e[this.thread.x][0] - e[j][0],
+                e[this.thread.x][1] - e[j][1],
+                e[this.thread.x][2] - e[j][2],
+              ];
 
-          // // const r = p1.radius + p2.radius;
-          const r = 1;
+              const d = setLength2(
+                delta[0],
+                delta[1],
+                delta[2],
+                (r - dist) / r
+              );
 
-          if (dist < r && dist > 0) {
-            const delta = [
-              e[this.thread.x][0] - e[j][0],
-              e[this.thread.x][1] - e[j][1],
-              e[this.thread.x][2] - e[j][2],
-            ];
+              x += d[0];
+              y += d[1];
+              z += d[2];
 
-            const d = setLength2(delta[0], delta[1], delta[2], (r - dist) / r);
-
-            x += d[0];
-            y += d[1];
-            z += d[2];
-
-            count++;
+              count++;
+            }
           }
-        }
 
-        if (count > 0) {
-          x /= count;
-          y /= count;
-          z /= count;
+          if (count > 0) {
+            x /= count;
+            y /= count;
+            z /= count;
+
+            return [x, y, z];
+          }
 
           return [x, y, z];
+        },
+        {
+          // dynamicArguments: true,
+          output: [this.particles.size],
+          precision: 'single',
+          // optimizeFloatMemory: true,
+          tactic: 'speed',
         }
+      );
+    }
 
-        return [x, y, z];
-      },
-      {
-        // dynamicArguments: true,
-        output: [this.buffersize],
-        precision: 'single',
-        // optimizeFloatMemory: true,
-        tactic: 'speed',
-      }
-    );
-  }
+    this.particlesCount = this.particles.size;
 
-  updateParticles(deltaTime) {
     const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
 
     this.collisionBatchSize = 0;
 
     // const start = performance.now();
 
-    const collisionForces = this.calculateCollisionForce(particles);
+    const collisionForces = this.calculateCollisionForce(
+      particles,
+      particles.length
+    );
     // console.log(collisionForces);
 
     // const end = performance.now();
