@@ -31,6 +31,12 @@ function distance2(x1, y1, z1, x2, y2, z2) {
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
+function setLength2(x, y, z, l) {
+  const s = Math.sqrt(x * x + y * y + z * z);
+  if (s === 0) return [x, y, z];
+  return [(x / s) * l, (y / s) * l, (z / s) * l];
+}
+
 let elements = [
   [1, 1, 0],
   [2, 2, 2],
@@ -39,22 +45,22 @@ let elements = [
   // ... 100k elements
 ];
 
-const gpu = new GPU({ mode: 'cpu' }); // { mode: 'cpu' }
-gpu.addFunction(distance, {
-  argumentTypes: {
-    a: 'Array(3)',
-    b: 'Array(3)',
-  },
-  returnType: 'Float',
-});
-
-gpu.addFunction(setLength, {
-  argumentTypes: {
-    v: 'Array(3)',
-    l: 'Float',
-  },
-  returnType: 'Array(3)',
-});
+const gpu = new GPU({ mode: 'gpu' }); // { mode: 'cpu' }
+// gpu.addFunction(distance, {
+//   argumentTypes: {
+//     a: 'Array(3)',
+//     b: 'Array(3)',
+//   },
+//   returnType: 'Float',
+// });
+//
+// gpu.addFunction(setLength, {
+//   argumentTypes: {
+//     v: 'Array(3)',
+//     l: 'Float',
+//   },
+//   returnType: 'Array(3)',
+// });
 
 gpu.addFunction(distance2, {
   // argumentTypes: {
@@ -62,6 +68,14 @@ gpu.addFunction(distance2, {
   //   b: 'Array(3)',
   // },
   returnType: 'Float',
+});
+
+gpu.addFunction(setLength2, {
+  // argumentTypes: {
+  //   a: 'Array(3)',
+  //   b: 'Array(3)',
+  // },
+  returnType: 'Array(3)',
 });
 
 // const kernel = gpu.createKernel(
@@ -111,7 +125,7 @@ export default class GPUPhysics extends SimplePhysics {
     } = props;
     super(props);
 
-    this.buffersize = 2000;
+    this.buffersize = 4000;
 
     // this.calculateDistanceMap = gpu.createKernel(
     //   function kernelFunction(e) {
@@ -143,50 +157,58 @@ export default class GPUPhysics extends SimplePhysics {
       function kernelFunction(e) {
         // return distance(e[this.thread.x], e[this.thread.y]);
 
-        const force = [0, 0, 0];
-        const i = this.thread.x;
-        const p1 = e[i];
+        let x = 0;
+        let y = 0;
+        let z = 0;
         let count = 0;
 
-        for (let j = 0; j < 2000; j++) {
+        for (let j = 0; j < 4000; j++) {
           // sum += a[this.thread.y][i] * b[i][this.thread.x];
-          const p2 = e[j];
 
-          const dist = distance(p1, p2);
+          const dist = distance2(
+            e[this.thread.x][0],
+            e[this.thread.x][1],
+            e[this.thread.x][2],
+            e[j][0],
+            e[j][1],
+            e[j][2]
+          );
 
-          // const deltaX = p1[0] - p2[0];
-          // const deltaY = p1[1] - p2[1];
-          // const deltaZ = p1[2] - p2[2];
-
-          // const r = p1.radius + p2.radius;
+          // // const r = p1.radius + p2.radius;
           const r = 1;
 
           if (dist < r && dist > 0) {
-            const delta = [p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]];
+            const delta = [
+              e[this.thread.x][0] - e[j][0],
+              e[this.thread.x][1] - e[j][1],
+              e[this.thread.x][2] - e[j][2],
+            ];
 
-            const d = setLength(delta, (r - dist) / r); // multiplyScalar
+            const d = setLength2(delta[0], delta[1], delta[2], (r - dist) / r);
 
-            force[0] += d[0];
-            force[1] += d[1];
-            force[2] += d[2];
+            x += d[0];
+            y += d[1];
+            z += d[2];
 
             count++;
           }
         }
 
         if (count > 0) {
-          force[0] /= count;
-          force[1] /= count;
-          force[2] /= count;
+          x /= count;
+          y /= count;
+          z /= count;
+
+          return [x, y, z];
         }
 
-        return force;
+        return [x, y, z];
       },
       {
         // dynamicArguments: true,
         output: [this.buffersize],
         precision: 'single',
-        optimizeFloatMemory: true,
+        // optimizeFloatMemory: true,
         tactic: 'speed',
       }
     );
