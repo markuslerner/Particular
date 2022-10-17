@@ -31,7 +31,7 @@ export default class GPUPhysics extends SimplePhysics {
   updateParticles(deltaTime) {
     if (this.particlesCount !== this.particles.size) {
       this.calculateCollisionForce = gpu.createKernel(
-        function kernelFunction(e, size) {
+        function kernelFunction(e) {
           // return distance(e[this.thread.x], e[this.thread.y]);
 
           let x = 0;
@@ -39,7 +39,7 @@ export default class GPUPhysics extends SimplePhysics {
           let z = 0;
           let count = 0;
 
-          for (let j = 0; j < size; j++) {
+          for (let j = 0; j < this.constants.size; j++) {
             // sum += a[this.thread.y][i] * b[i][this.thread.x];
 
             const dist = distance2(
@@ -87,11 +87,13 @@ export default class GPUPhysics extends SimplePhysics {
           return [x, y, z];
         },
         {
-          // dynamicArguments: true,
+          constants: { size: this.particles.size },
+          dynamicArguments: true,
           output: [this.particles.size],
           precision: 'single',
           // optimizeFloatMemory: true,
           tactic: 'speed',
+          argumentTypes: { e: 'Array' },
         }
       );
     }
@@ -102,10 +104,7 @@ export default class GPUPhysics extends SimplePhysics {
 
     // const start = performance.now();
 
-    const collisionForces = this.calculateCollisionForce(
-      particles,
-      particles.length
-    );
+    const collisionForces = this.calculateCollisionForce(particles);
     // console.log(collisionForces);
 
     // const end = performance.now();
