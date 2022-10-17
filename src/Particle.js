@@ -57,10 +57,10 @@ export default class Particle extends Vector3 {
     return this;
   }
 
-  applyBehaviors() {
+  applyBehaviors(index, distanceMap = undefined) {
     if (this.behaviors !== null) {
       for (const behavior of this.behaviors) {
-        behavior.apply(this);
+        behavior.apply(this, index, distanceMap);
       }
     }
   }
@@ -122,9 +122,9 @@ export default class Particle extends Vector3 {
     return this;
   }
 
-  update(deltaTime) {
+  update(deltaTime, index, distanceMap = undefined) {
     if (!this.locked) {
-      this.applyBehaviors();
+      this.applyBehaviors(index, distanceMap);
       this.applyForce(deltaTime);
     }
     this.scaleVelocity(1 - this.friction);

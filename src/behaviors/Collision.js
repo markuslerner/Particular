@@ -19,7 +19,7 @@ export default class Collision {
     this.force = new Vector3();
   }
 
-  apply(particle) {
+  apply(particle, index, distanceMap = undefined) {
     if (this.enabled) {
       if (particle.updateCollisionForce) {
         this.force.set(0, 0, 0);
@@ -30,22 +30,28 @@ export default class Collision {
             ? particle.radius
             : particle.radius * (1.0 - this.offset);
 
+        let index2 = 0;
         for (const neighbor of particle.neighbors) {
           if (neighbor !== particle && !neighbor.noCollision) {
             delta.copy(particle);
             delta.sub(neighbor);
 
-            const distSq = delta.lengthSq();
+            // const dist = delta.length();
+            const dist = distanceMap
+              ? distanceMap[index][index2]
+              : delta.length();
 
             const r = radius + neighbor.radius;
 
-            if (distSq < r * r) {
-              delta.setLength((r - Math.sqrt(distSq)) / r); // multiplyScalar
+            if (dist < r) {
+              delta.setLength((r - dist) / r); // multiplyScalar
 
               this.force.add(delta);
               count++;
             }
           }
+
+          index2++;
         }
 
         if (count > 0) {
