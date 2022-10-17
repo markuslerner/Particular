@@ -209,7 +209,7 @@ export default class SimplePhysics {
   /**
    * Updates all particle positions
    */
-  updateParticles(deltaTime, forceMap = undefined) {
+  updateParticles(deltaTime, collisionForces = undefined) {
     // console.log('updateParticles()');
 
     let index = 0;
@@ -224,11 +224,19 @@ export default class SimplePhysics {
         index < this.collisionStartIndex + this.collisionBatchSize;
 
       for (const behavior of this.behaviors) {
-        behavior.apply(particle, index, forceMap && forceMap[index]);
+        behavior.apply(
+          particle,
+          index,
+          collisionForces && collisionForces[index]
+        );
       }
 
       particle.scaleVelocity(1 - this.friction);
-      particle.update(deltaTime, index, forceMap && forceMap[index]);
+      particle.update(
+        deltaTime,
+        index,
+        collisionForces && collisionForces[index]
+      );
 
       index++;
     }

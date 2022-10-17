@@ -19,12 +19,12 @@ export default class Collision {
     this.force = new Vector3();
   }
 
-  apply(particle, index, force = undefined) {
+  apply(particle, index, collisionForce = undefined) {
     if (this.enabled) {
-      if (force) {
-        this.force.x = force[0];
-        this.force.y = force[1];
-        this.force.z = force[2];
+      if (collisionForce) {
+        this.force.x = collisionForce[0];
+        this.force.y = collisionForce[1];
+        this.force.z = collisionForce[2];
 
         limit(this.force, this.maxForce);
 
