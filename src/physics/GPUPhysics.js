@@ -100,8 +100,6 @@ export default class GPUPhysics extends SimplePhysics {
 
     const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
 
-    this.collisionBatchSize = 0;
-
     // const start = performance.now();
 
     const collisionForces = this.calculateCollisionForce(

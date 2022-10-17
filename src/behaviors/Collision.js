@@ -30,39 +30,37 @@ export default class Collision {
 
         if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
       } else {
-        if (particle.updateCollisionForce) {
-          this.force.set(0, 0, 0);
+        this.force.set(0, 0, 0);
 
-          let count = 0;
-          const radius =
-            this.offset === 0.0
-              ? particle.radius
-              : particle.radius * (1.0 - this.offset);
+        let count = 0;
+        const radius =
+          this.offset === 0.0
+            ? particle.radius
+            : particle.radius * (1.0 - this.offset);
 
-          for (const neighbor of particle.neighbors) {
-            if (neighbor !== particle && !neighbor.noCollision) {
-              delta.copy(particle);
-              delta.sub(neighbor);
+        for (const neighbor of particle.neighbors) {
+          if (neighbor !== particle && !neighbor.noCollision) {
+            delta.copy(particle);
+            delta.sub(neighbor);
 
-              const dist = delta.length();
+            const dist = delta.length();
 
-              const r = radius + neighbor.radius;
+            const r = radius + neighbor.radius;
 
-              if (dist < r) {
-                delta.setLength((r - dist) / r); // multiplyScalar
+            if (dist < r) {
+              delta.setLength((r - dist) / r); // multiplyScalar
 
-                this.force.add(delta);
-                count++;
-              }
+              this.force.add(delta);
+              count++;
             }
           }
+        }
 
-          if (count > 0) {
-            this.force.multiplyScalar(1.0 / count);
-            limit(this.force, this.maxForce);
+        if (count > 0) {
+          this.force.multiplyScalar(1.0 / count);
+          limit(this.force, this.maxForce);
 
-            if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
-          }
+          if (this.weight !== 1.0) this.force.multiplyScalar(this.weight);
         }
       }
 

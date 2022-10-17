@@ -120,7 +120,6 @@
       const params = {
         friction: 0.98,
         count: 4000,
-        collisionBatchSize: 2000,
         sizeMin: 0.2,
         sizeMax: 0.2,
         opacity: 0.8,
@@ -152,7 +151,6 @@
 
       const physics = new GPUPhysics({
         friction: params.friction,
-        collisionBatchSize: params.collisionBatchSize,
       });
 
       let scales = [];
@@ -350,9 +348,6 @@
       });
       gui.add(params, 'count', 0, 5000).onChange((v) => {
         createParticles();
-      });
-      gui.add(params, 'collisionBatchSize', 0, 5000).onChange((v) => {
-        physics.collisionBatchSize = v;
       });
       gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {
         updateSizes();

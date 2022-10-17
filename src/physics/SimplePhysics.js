@@ -8,22 +8,15 @@
  * Koehler - 2012 www.lab-eds.org
  */
 export default class SimplePhysics {
-  constructor({
-    friction = 0.95,
-    springIterationsCount = 50,
-    collisionBatchSize = Infinity,
-  } = {}) {
+  constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
     this.behaviors = new Set();
     this.constraints = new Set();
     this.groups = new Set();
     this.particles = new Set();
     this.springs = new Set();
 
-    this.collisionBatchSize = collisionBatchSize;
     this.friction = friction;
     this.springIterationsCount = springIterationsCount;
-
-    this.collisionStartIndex = 0;
   }
 
   /**
@@ -219,10 +212,6 @@ export default class SimplePhysics {
         particle.neighbors = this.particles;
       }
 
-      particle.updateCollisionForce =
-        index >= this.collisionStartIndex &&
-        index < this.collisionStartIndex + this.collisionBatchSize;
-
       for (const behavior of this.behaviors) {
         behavior.apply(
           particle,
@@ -239,16 +228,6 @@ export default class SimplePhysics {
       );
 
       index++;
-    }
-
-    if (this.particles.size > this.collisionBatchSize) {
-      this.collisionStartIndex += this.collisionBatchSize;
-    }
-    if (
-      this.collisionStartIndex >=
-      this.particles.size + this.collisionBatchSize
-    ) {
-      this.collisionStartIndex = 0;
     }
   }
 
