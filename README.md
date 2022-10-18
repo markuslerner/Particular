@@ -6,11 +6,11 @@ Particle system written in JavaScript. Heavily inspired by [Punktiert](https://g
 
 Why yet another physics/particle system libary? I simply didn't find a JavaScript physics/particle system libary that is GPU-accelerated, behavior-based (eg. flocking/swarm, seek/arrive) and works they way I was used to from earlier days in Java/Processing.
 
-Collaborations and improvements are welcome.
+Collaborations and improvements welcome.
 
 ### Highlights
 
-- Simply API
+- Simple API
 - GPU-accelerated (currently only Collision behavior) using gpu.js
 - Vector3 API is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
 
