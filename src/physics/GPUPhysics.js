@@ -1,7 +1,5 @@
 import { GPU } from 'gpu.js';
 
-// Based on https://stackoverflow.com/questions/68467146/gpu-js-calculating-distance-between-multi-objects-xyz
-
 import SimplePhysics from './SimplePhysics.js';
 
 function add(x1, y1, z1, x2, y2, z2) {
@@ -102,8 +100,7 @@ export default class GPUPhysics extends SimplePhysics {
               e[j][2]
             );
 
-            // // const r = p1.radius + p2.radius;
-            const r = 1;
+            const r = e[this.thread.x][3] + e[j][3];
 
             if (dist < r && dist > 0) {
               const delta = sub(
@@ -146,7 +143,7 @@ export default class GPUPhysics extends SimplePhysics {
       this.particlesCountMaxLast = this.particles.size;
     }
 
-    const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
+    const particles = [...this.particles].map((p) => [p.x, p.y, p.z, p.radius]);
 
     // const start = performance.now();
 
