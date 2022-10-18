@@ -69,7 +69,7 @@ Collaborations and improvements are welcome.
 
 ### Examples
 
-- [All behaviors](https://dev.markuslerner.com/particular/examples/index.html)
+- [All behaviors](https://dev.markuslerner.com/particular/examples/all-behaviors.html)
 - [Collision Starfield](https://dev.markuslerner.com/particular/examples/collision-starfield.html)
 - [Flocking](https://dev.markuslerner.com/particular/examples/flocking.html)
 - [Seek/Arrive](https://dev.markuslerner.com/particular/examples/seek-arrive.html)
