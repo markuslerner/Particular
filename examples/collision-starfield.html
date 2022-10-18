@@ -97,7 +97,7 @@
 
       import {
         Particle,
-        GridPhysics,
+        GPUPhysics,
         SimplePhysics,
         Collision,
         Seek,
@@ -114,6 +114,7 @@
       const params = {
         friction: 0.1,
         count: 1000,
+        useGPU: true,
         sizeMin: 0.01,
         sizeMax: 0.5,
         opacity: 0.8,
@@ -130,10 +131,14 @@
       //   friction: params.friction,
       // });
 
-      const physics = new GridPhysics({
+      const physics = new GPUPhysics({
         friction: params.friction,
-        neighborRange: 0.5,
       });
+
+      // const physics = new GridPhysics({
+      //   friction: params.friction,
+      //   neighborRange: 0.5,
+      // });
 
       let scales = [];
       let vertices = [];
@@ -153,7 +158,7 @@
 
           particle.data.collision = new Collision({
             offset: 0.0,
-            maxForce: 0.1,
+            maxForce: 0.5,
           });
           particle.addBehavior(particle.data.collision);
 
@@ -242,6 +247,9 @@
       gui.add(params, 'count', 0, 10000).onChange((v) => {
         createParticles();
       });
+      gui.add(params, 'useGPU').onChange((v) => {
+        physics.useGPU = v;
+      });
       gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {
         updateSizes();
       });
@@ -329,9 +337,9 @@
 
         physics.update();
 
-        console.log(
-          physics.neighborsCountAverage + ' neighbors per particle by average'
-        );
+        // console.log(
+        //   physics.neighborsCountAverage + ' neighbors per particle by average'
+        // );
 
         let i = 0;
         physics.particles.forEach((particle) => {
