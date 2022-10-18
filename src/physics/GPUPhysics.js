@@ -4,14 +4,14 @@ import { GPU } from 'gpu.js';
 
 import SimplePhysics from './SimplePhysics.js';
 
-function distance2(x1, y1, z1, x2, y2, z2) {
+function distance(x1, y1, z1, x2, y2, z2) {
   let dx = x1 - x2;
   let dy = y1 - y2;
   let dz = z1 - z2;
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-function setLength2(x, y, z, l) {
+function setLength(x, y, z, l) {
   const s = Math.sqrt(x * x + y * y + z * z);
   if (s === 0) return [x, y, z];
   return [(x / s) * l, (y / s) * l, (z / s) * l];
@@ -19,17 +19,22 @@ function setLength2(x, y, z, l) {
 
 const gpu = new GPU({ mode: 'gpu' }); // { mode: 'cpu' }
 
-gpu.addFunction(distance2, {
+gpu.addFunction(distance, {
   returnType: 'Float',
 });
 
-gpu.addFunction(setLength2, {
+gpu.addFunction(setLength, {
   returnType: 'Array(3)',
 });
 
 export default class GPUPhysics extends SimplePhysics {
   updateParticles(deltaTime) {
-    if (this.particlesCount !== this.particles.size) {
+    if (
+      !this.particlesCountMaxLast ||
+      this.particlesCountMaxLast < this.particles.size
+    ) {
+      // console.log('DEBUG: Create collision force kernel function');
+
       this.calculateCollisionForce = gpu.createKernel(
         function kernelFunction(e, size) {
           // return distance(e[this.thread.x], e[this.thread.y]);
@@ -42,7 +47,7 @@ export default class GPUPhysics extends SimplePhysics {
           for (let j = 0; j < size; j++) {
             // sum += a[this.thread.y][i] * b[i][this.thread.x];
 
-            const dist = distance2(
+            const dist = distance(
               e[this.thread.x][0],
               e[this.thread.x][1],
               e[this.thread.x][2],
@@ -61,12 +66,7 @@ export default class GPUPhysics extends SimplePhysics {
                 e[this.thread.x][2] - e[j][2],
               ];
 
-              const d = setLength2(
-                delta[0],
-                delta[1],
-                delta[2],
-                (r - dist) / r
-              );
+              const d = setLength(delta[0], delta[1], delta[2], (r - dist) / r);
 
               x += d[0];
               y += d[1];
@@ -94,21 +94,21 @@ export default class GPUPhysics extends SimplePhysics {
           // optimizeFloatMemory: true,
           tactic: 'speed',
           argumentTypes: { e: 'Array', size: 'Integer' },
-          loopMaxIterations: 5000,
+          loopMaxIterations: this.particles.size,
         }
       );
-    }
 
-    this.particlesCount = this.particles.size;
+      this.particlesCountMaxLast = this.particles.size;
+    }
 
     const particles = [...this.particles].map((p) => [p.x, p.y, p.z]);
 
     // const start = performance.now();
 
-    const collisionForces = this.calculateCollisionForce(
-      particles,
-      particles.length
-    );
+    const collisionForces =
+      particles.length > 0
+        ? this.calculateCollisionForce(particles, particles.length)
+        : undefined;
     // console.log(collisionForces);
 
     // const end = performance.now();
