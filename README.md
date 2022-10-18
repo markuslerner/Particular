@@ -14,37 +14,52 @@ Collaborations and improvements are welcome.
 - GPU-accelerated (currently only Collision behavior) using gpu.js
 - Vector3 API is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
 
-### Hot it works:
+### Usage
+
+```console
+yarn add @markuslerner/particular
+```
+
+or
+
+```console
+npm install @markuslerner/particular
+```
 
 1. Include classes from this package:
 
-```
-import { SimplePhysics, Particle, Collision, Seek } from "@markuslerner/particular";
+```js
+import {
+  SimplePhysics,
+  Particle,
+  Collision,
+  Seek,
+} from '@markuslerner/particular';
 ```
 
 2. Create physics:
 
-```
+```js
 const physics = new GPUPhysics();
 ```
 
 3. Create particle(s) and add to physics:
 
-```
+```js
 const particle = new Particle(x, y, z);
 physics.addParticle(particle);
 ```
 
 4. Add behavior(s):
 
-```
+```js
 particle.addBehavior(new Collision());
 particle.addBehavior(new Seek());
 ```
 
 5. Update physics every frame:
 
-```
+```js
 physics.update();
 ```
 
