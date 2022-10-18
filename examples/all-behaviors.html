@@ -96,6 +96,7 @@
       import {
         Particle,
         GPUPhysics,
+        SimplePhysics,
         Avoid,
         Collision,
         Seek,
@@ -119,9 +120,9 @@
 
       const params = {
         friction: 0.98,
-        count: 4000,
-        sizeMin: 0.2,
-        sizeMax: 0.2,
+        count: 5000,
+        sizeMin: 0.1,
+        sizeMax: 0.1,
         opacity: 0.8,
         radiusFactor: 5.0,
         constrainZ: false,
@@ -131,19 +132,20 @@
         avoidMouse: true,
         avoidMaxForce: 2.0,
         avoidMaxSpeed: 1.0,
+        avoidMaxDistance: 2.0,
         seek: true,
         seekMouse: false,
         seekMaxForce: 2.0,
         seekMaxSpeed: 1.0,
         seekMinDistance: 1.5,
-        seekSlowDownDistance: 3.0,
+        seekSlowDownDistance: 50.0,
         seekEasing: 1,
         seekRandom: false,
         separate: false,
         wander: false,
       };
 
-      const range = 2;
+      const range = 0.01;
 
       const mousePosition = new Vector3();
 
@@ -179,7 +181,7 @@
             target: params.avoidMouse ? mousePosition : avoidTarget,
             maxForce: params.avoidMaxForce,
             maxSpeed: params.avoidMaxSpeed,
-            maxDistance: 2.5,
+            maxDistance: params.avoidMaxDistance,
           });
           particle.addBehavior(particle.data.avoid);
 
@@ -251,6 +253,11 @@
               particle.data.avoid.maxSpeed = v;
             });
           });
+          folder.add(params, 'avoidMaxDistance', 0, 10).onChange((v) => {
+            physics.particles.forEach((particle) => {
+              particle.data.avoid.maxDistance = v;
+            });
+          });
         } else if (type === 'collision') {
           folder.add(params, 'collisionMaxForce', 0, 10).onChange((v) => {
             physics.particles.forEach((particle) => {
@@ -281,7 +288,7 @@
             });
           });
           folder
-            .add(params, 'seekSlowDownDistance', 0.0, 50.0)
+            .add(params, 'seekSlowDownDistance', 0.0, 100.0)
             .onChange((v) => {
               physics.particles.forEach((particle) => {
                 particle.data.seek.slowDownDistance = v;
@@ -346,13 +353,13 @@
       gui.add(params, 'friction', 0.01, 1.0).onChange((v) => {
         physics.friction = v;
       });
-      gui.add(params, 'count', 0, 5000).onChange((v) => {
+      gui.add(params, 'count', 0, 10000).onChange((v) => {
         createParticles();
       });
-      gui.add(params, 'sizeMin', 0.01, 10.0).onChange((v) => {
+      gui.add(params, 'sizeMin', 0.01, 1.0).onChange((v) => {
         updateSizes();
       });
-      gui.add(params, 'sizeMax', 0.01, 10.0).onChange((v) => {
+      gui.add(params, 'sizeMax', 0.01, 1.0).onChange((v) => {
         updateSizes();
       });
       gui.add(params, 'opacity', 0.0, 1.0).onChange((v) => {
