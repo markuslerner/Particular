@@ -132,8 +132,21 @@ export default class GPUPhysics extends SimplePhysics {
     // const end = performance.now();
     // console.log(end - start);
 
-    super.updateParticles(deltaTime, collisionForces);
+    let index = 0;
 
-    // super.updateParticles(deltaTime);
+    for (const particle of this.particles) {
+      if (particle.neighbors === null) {
+        particle.neighbors = this.particles;
+      }
+
+      for (const behavior of this.behaviors) {
+        behavior.apply(particle, collisionForces && collisionForces[index]);
+      }
+
+      particle.scaleVelocity(1 - this.friction);
+      particle.update(deltaTime, collisionForces && collisionForces[index]);
+
+      index++;
+    }
   }
 }
