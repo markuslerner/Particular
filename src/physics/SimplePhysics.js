@@ -213,19 +213,11 @@ export default class SimplePhysics {
       }
 
       for (const behavior of this.behaviors) {
-        behavior.apply(
-          particle,
-          index,
-          collisionForces && collisionForces[index]
-        );
+        behavior.apply(particle, collisionForces && collisionForces[index]);
       }
 
       particle.scaleVelocity(1 - this.friction);
-      particle.update(
-        deltaTime,
-        index,
-        collisionForces && collisionForces[index]
-      );
+      particle.update(deltaTime, collisionForces && collisionForces[index]);
 
       index++;
     }
