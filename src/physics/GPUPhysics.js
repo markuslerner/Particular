@@ -24,9 +24,10 @@ function setLength(x, y, z, l) {
 }
 
 export default class GPUPhysics extends SimplePhysics {
-  constructor(props) {
-    const { debug = false, useGPU = true } = props;
+  constructor(props = {}) {
     super(props);
+
+    const { debug = false, useGPU = true } = props;
 
     this.debug = debug;
     this.useGPU = useGPU;

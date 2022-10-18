@@ -4,11 +4,12 @@ import HashGrid from '../math/HashGrid.js';
 // GridPhysics used HashGrid, supposed to be faster than SimplePhysics, but in some cases yields strange results
 
 export default class GridPhysics extends SimplePhysics {
-  constructor(props) {
+  constructor(props = {}) {
+    super(props);
+
     const {
       neighborRange = 80, // max distance for picking neighbors
     } = props;
-    super(props);
 
     this.hashgrid = new HashGrid({ neighborRange });
     this.neighborsCountAverage = 0;
