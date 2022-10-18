@@ -97,7 +97,7 @@ Available Behaviors:
 
 ### To Do
 
-- Add gpu acceleration for Align, Cohesion and Separate bevahiors as well
+- Add gpu acceleration for Align, Cohesion and Separate behaviors as well
 - Create 3D flocking example
 - Add missing behaviors and params to all behaviors example
 - Consider writing behaviors as a plugin for matter.js
