@@ -17,17 +17,35 @@ function setLength(x, y, z, l) {
   return [(x / s) * l, (y / s) * l, (z / s) * l];
 }
 
-const gpu = new GPU({ mode: 'gpu' }); // { mode: 'cpu' }
-
-gpu.addFunction(distance, {
-  returnType: 'Float',
-});
-
-gpu.addFunction(setLength, {
-  returnType: 'Array(3)',
-});
-
 export default class GPUPhysics extends SimplePhysics {
+  constructor(props) {
+    super(props);
+
+    this.gpu = new GPU(); // { mode: 'cpu' }
+
+    this.gpu.addFunction(distance, {
+      argumentTypes: {
+        x1: 'Number',
+        y1: 'Number',
+        z1: 'Number',
+        x2: 'Number',
+        y2: 'Number',
+        z2: 'Number',
+      },
+      returnType: 'Float',
+    });
+
+    this.gpu.addFunction(setLength, {
+      argumentTypes: {
+        x: 'Number',
+        y: 'Number',
+        z: 'Number',
+        l: 'Number',
+      },
+      returnType: 'Array(3)',
+    });
+  }
+
   updateParticles(deltaTime) {
     if (
       !this.particlesCountMaxLast ||
@@ -35,7 +53,7 @@ export default class GPUPhysics extends SimplePhysics {
     ) {
       // console.log('DEBUG: Create collision force kernel function');
 
-      this.calculateCollisionForce = gpu.createKernel(
+      this.calculateCollisionForce = this.gpu.createKernel(
         function kernelFunction(e, size) {
           // return distance(e[this.thread.x], e[this.thread.y]);
 
