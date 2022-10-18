@@ -27,6 +27,8 @@ export default class GPUPhysics extends SimplePhysics {
   constructor(props) {
     super(props);
 
+    this.useGPU = true;
+
     this.gpu = new GPU(); // { mode: 'cpu' }
 
     this.gpu.addFunction(add, {
@@ -78,8 +80,9 @@ export default class GPUPhysics extends SimplePhysics {
 
   updateParticles(deltaTime) {
     if (
-      !this.particlesCountMaxLast ||
-      this.particlesCountMaxLast < this.particles.size
+      this.useGPU &&
+      (!this.particlesCountMaxLast ||
+        this.particlesCountMaxLast < this.particles.size)
     ) {
       // console.log('DEBUG: Create collision force kernel function');
 
@@ -143,36 +146,45 @@ export default class GPUPhysics extends SimplePhysics {
       this.particlesCountMaxLast = this.particles.size;
     }
 
-    const particles = [...this.particles].map((p) => [p.x, p.y, p.z, p.radius]);
+    if (this.useGPU) {
+      const particles = [...this.particles].map((p) => [
+        p.x,
+        p.y,
+        p.z,
+        p.radius,
+      ]);
 
-    // const start = performance.now();
+      // const start = performance.now();
 
-    const collision =
-      particles.length > 0
-        ? this.calculateCollisionForce(particles, particles.length)
-        : undefined;
-    // console.log(collisionForces);
+      const collision =
+        particles.length > 0
+          ? this.calculateCollisionForce(particles, particles.length)
+          : undefined;
+      // console.log(collisionForces);
 
-    // const end = performance.now();
-    // console.log(end - start);
+      // const end = performance.now();
+      // console.log(end - start);
 
-    let index = 0;
+      let index = 0;
 
-    for (const particle of this.particles) {
-      if (particle.neighbors === null) {
-        particle.neighbors = this.particles;
+      for (const particle of this.particles) {
+        if (particle.neighbors === null) {
+          particle.neighbors = this.particles;
+        }
+
+        const forces = { collision: collision[index] };
+
+        for (const behavior of this.behaviors) {
+          behavior.apply(particle, forces);
+        }
+
+        particle.scaleVelocity(1 - this.friction);
+        particle.update(deltaTime, forces);
+
+        index++;
       }
-
-      const forces = { collision: collision[index] };
-
-      for (const behavior of this.behaviors) {
-        behavior.apply(particle, forces);
-      }
-
-      particle.scaleVelocity(1 - this.friction);
-      particle.update(deltaTime, forces);
-
-      index++;
+    } else {
+      super.updateParticles(deltaTime);
     }
   }
 }

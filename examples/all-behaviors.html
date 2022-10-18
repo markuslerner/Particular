@@ -120,7 +120,8 @@
 
       const params = {
         friction: 0.98,
-        count: 5000,
+        count: 4000,
+        useGPU: true,
         sizeMin: 0.1,
         sizeMax: 0.1,
         opacity: 0.8,
@@ -355,6 +356,9 @@
       });
       gui.add(params, 'count', 0, 10000).onChange((v) => {
         createParticles();
+      });
+      gui.add(params, 'useGPU').onChange((v) => {
+        physics.useGPU = v;
       });
       gui.add(params, 'sizeMin', 0.01, 1.0).onChange((v) => {
         updateSizes();
