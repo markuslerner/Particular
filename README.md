@@ -2,6 +2,12 @@
 
 [![NPM Package](https://img.shields.io/npm/v/@markuslerner/particular.svg?style=flat)](https://www.npmjs.com/package/@markuslerner/particular)
 
+This branch tries to implement GPU acceleration using GPUComputationRender like in these examples:
+https://github.com/jonobr1/force-directed-graph
+https://github.com/epranka/gpucomputationrender-three
+
+Still work in progress ...
+
 Particle system written in JavaScript. Heavily inspired by [Punktiert](https://github.com/djrkohler/punktiert) Java library.
 
 Why yet another physics/particle system libary? I simply didn't find a JavaScript physics/particle system libary that is light-weight, behavior-based (eg. flocking/swarm, seek/arrive) and works they way I was used to from earlier days in Java/Processing.
