@@ -123,7 +123,7 @@ export default class GPUPhysics extends SimplePhysics {
 
     // const start = performance.now();
 
-    const collisionForces =
+    const collision =
       particles.length > 0
         ? this.calculateCollisionForce(particles, particles.length)
         : undefined;
@@ -139,12 +139,14 @@ export default class GPUPhysics extends SimplePhysics {
         particle.neighbors = this.particles;
       }
 
+      const forces = { collision: collision[index] };
+
       for (const behavior of this.behaviors) {
-        behavior.apply(particle, collisionForces && collisionForces[index]);
+        behavior.apply(particle, forces);
       }
 
       particle.scaleVelocity(1 - this.friction);
-      particle.update(deltaTime, collisionForces && collisionForces[index]);
+      particle.update(deltaTime, forces);
 
       index++;
     }
