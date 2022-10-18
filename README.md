@@ -74,6 +74,24 @@ Collaborations and improvements are welcome.
 - [Flocking](https://dev.markuslerner.com/particular/examples/flocking.html)
 - [Seek/Arrive](https://dev.markuslerner.com/particular/examples/seek-arrive.html)
 
+### Editing source code and examples
+
+To edit the source code and the examples, run:
+
+```console
+yarn start
+```
+
+or
+
+```console
+npm start
+```
+
+A development server will be launched under http://localhost:8000/
+
+The files from the src folder will we re-built automatically into a virtual build/particular.js upon reloading the page.
+
 ### API Docs
 
 To be created ...
