@@ -27,6 +27,7 @@ export default class GPUPhysics extends SimplePhysics {
   constructor(props) {
     super(props);
 
+    this.debug = false;
     this.useGPU = true;
 
     this.gpu = new GPU(); // { mode: 'cpu' }
@@ -84,11 +85,12 @@ export default class GPUPhysics extends SimplePhysics {
       (!this.particlesCountMaxLast ||
         this.particlesCountMaxLast < this.particles.size)
     ) {
-      // console.log(
-      //   'DEBUG: Create collision force kernel function for ' +
-      //     this.particles.size +
-      //     ' particles'
-      // );
+      if (this.debug)
+        console.log(
+          'DEBUG: Create collision force kernel function for ' +
+            this.particles.size +
+            ' particles'
+        );
 
       this.calculateCollisionForce = this.gpu.createKernel(
         function kernelFunction(e, size) {
