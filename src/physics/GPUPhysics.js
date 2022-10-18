@@ -4,6 +4,14 @@ import { GPU } from 'gpu.js';
 
 import SimplePhysics from './SimplePhysics.js';
 
+function add(x1, y1, z1, x2, y2, z2) {
+  return [x1 + x2, y1 + y2, z1 + z2];
+}
+
+function sub(x1, y1, z1, x2, y2, z2) {
+  return [x1 - x2, y1 - y2, z1 - z2];
+}
+
 function distance(x1, y1, z1, x2, y2, z2) {
   let dx = x1 - x2;
   let dy = y1 - y2;
@@ -22,6 +30,30 @@ export default class GPUPhysics extends SimplePhysics {
     super(props);
 
     this.gpu = new GPU(); // { mode: 'cpu' }
+
+    this.gpu.addFunction(add, {
+      argumentTypes: {
+        x1: 'Number',
+        y1: 'Number',
+        z1: 'Number',
+        x2: 'Number',
+        y2: 'Number',
+        z2: 'Number',
+      },
+      returnType: 'Array(3)',
+    });
+
+    this.gpu.addFunction(sub, {
+      argumentTypes: {
+        x1: 'Number',
+        y1: 'Number',
+        z1: 'Number',
+        x2: 'Number',
+        y2: 'Number',
+        z2: 'Number',
+      },
+      returnType: 'Array(3)',
+    });
 
     this.gpu.addFunction(distance, {
       argumentTypes: {
@@ -55,16 +87,12 @@ export default class GPUPhysics extends SimplePhysics {
 
       this.calculateCollisionForce = this.gpu.createKernel(
         function kernelFunction(e, size) {
-          // return distance(e[this.thread.x], e[this.thread.y]);
-
           let x = 0;
           let y = 0;
           let z = 0;
           let count = 0;
 
           for (let j = 0; j < size; j++) {
-            // sum += a[this.thread.y][i] * b[i][this.thread.x];
-
             const dist = distance(
               e[this.thread.x][0],
               e[this.thread.x][1],
@@ -78,11 +106,14 @@ export default class GPUPhysics extends SimplePhysics {
             const r = 1;
 
             if (dist < r && dist > 0) {
-              const delta = [
-                e[this.thread.x][0] - e[j][0],
-                e[this.thread.x][1] - e[j][1],
-                e[this.thread.x][2] - e[j][2],
-              ];
+              const delta = sub(
+                e[this.thread.x][0],
+                e[this.thread.x][1],
+                e[this.thread.x][2],
+                e[j][0],
+                e[j][1],
+                e[j][2]
+              );
 
               const d = setLength(delta[0], delta[1], delta[2], (r - dist) / r);
 
@@ -95,14 +126,10 @@ export default class GPUPhysics extends SimplePhysics {
           }
 
           if (count > 0) {
-            x /= count;
-            y /= count;
-            z /= count;
-
+            return [x / count, y / count, z / count];
+          } else {
             return [x, y, z];
           }
-
-          return [x, y, z];
         },
         {
           // constants: { size: this.particles.size },
