@@ -183,7 +183,11 @@ export default class GPUPhysics extends SimplePhysics {
           particle.neighbors = this.particles;
         }
 
-        const forces = { collision: collision[index] };
+        // Use gpu-calculated forces only, if this particle uses the global neighbors (this.particles):
+        const forces =
+          particle.neighbors === this.particles
+            ? { collision: collision[index] }
+            : undefined;
 
         for (const behavior of this.behaviors) {
           behavior.apply(particle, forces);
