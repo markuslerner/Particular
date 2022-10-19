@@ -115,7 +115,7 @@ export default class GPUPhysics extends SimplePhysics {
 
             const r = e[this.thread.x][3] + e[j][3];
 
-            if (dist < r && dist > 0) {
+            if (e[j][4] === 0.0 && dist < r && dist > 0) {
               const delta = sub(
                 e[this.thread.x][0],
                 e[this.thread.x][1],
@@ -162,6 +162,7 @@ export default class GPUPhysics extends SimplePhysics {
         p.y,
         p.z,
         p.radius,
+        p.noCollision ? 1.0 : 0.0,
       ]);
 
       // const start = performance.now();
