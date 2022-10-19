@@ -10,9 +10,10 @@ Collaborations and improvements welcome.
 
 ### Highlights
 
-- Simple API
 - GPU-accelerated (currently only Collision behavior) using gpu.js
-- Vector3 API is fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
+- Simple API
+- Behavior-based
+- Vector3 API fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
 
 ### Usage
 
