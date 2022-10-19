@@ -85,7 +85,7 @@ export default class GPUPhysics extends SimplePhysics {
     if (
       this.useGPU &&
       (!this.particlesCountMaxLast ||
-        this.particlesCountMaxLast < this.particles.size)
+        this.particlesCountMaxLast !== this.particles.size)
     ) {
       if (this.debug)
         console.log(
@@ -93,6 +93,8 @@ export default class GPUPhysics extends SimplePhysics {
             this.particles.size +
             ' particles'
         );
+
+      if (this.calculateCollisionForce) this.calculateCollisionForce.destroy();
 
       this.calculateCollisionForce = this.gpu.createKernel(
         function kernelFunction(e, size) {
