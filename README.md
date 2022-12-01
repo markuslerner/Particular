@@ -114,6 +114,18 @@ Available Behaviors:
 - Wander: random wander movment
 - Wrap: wrap around word box
 
+### Editing source
+
+In order to edit the source code, run:
+
+```console
+yarn start
+```
+
+And open http://127.0.0.1:8000/ in your browers.
+
+The files in the `build` folder will automatically be rebuilt when modified.
+
 ### To Do
 
 - Add gpu acceleration for Align, Cohesion and Separate behaviors as well
