@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild src/index.js --bundle --minify --format=esm --sourcemap --external:three --outfile=build/particular.js",
-    "start": "npm run build -- --servedir=./",
-    "watch": "npm run build -- --watch",
+    "start": "yarn build --servedir=./",
+    "watch": "yarn build --watch",
     "lint": "eslint src/** --ext .js",
     "examples": "ws"
   },
