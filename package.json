@@ -1,6 +1,6 @@
 {
   "name": "@markuslerner/particular",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Particle system for JavaScript",
   "type": "module",
   "module": "./build/particular.js",
@@ -41,9 +41,9 @@
   },
   "homepage": "https://github.com/markuslerner/Particular#readme",
   "devDependencies": {
-    "@babel/core": "^7.18.2",
-    "@babel/eslint-parser": "^7.18.2",
-    "@babel/preset-env": "^7.18.2",
+    "@babel/core": "^7.20.12",
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.20.2",
     "esbuild": "^0.14.23",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.4.0",
