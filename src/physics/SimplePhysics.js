@@ -10,7 +10,6 @@
 export default class SimplePhysics {
   constructor({ friction = 0.95, springIterationsCount = 50 } = {}) {
     this.behaviors = new Set();
-    this.constraints = new Set();
     this.groups = new Set();
     this.particles = new Set();
     this.springs = new Set();
@@ -35,7 +34,7 @@ export default class SimplePhysics {
    * @return itself
    */
   addParticle(particle) {
-    return this.returnIfConstrained(particle);
+    return this.returnIfDuplicate(particle);
   }
 
   /**
@@ -49,11 +48,6 @@ export default class SimplePhysics {
       this.springs.add(s);
     }
     return this;
-  }
-
-  addConstraint(constraint) {
-    this.constraints.add(constraint);
-    return constraint;
   }
 
   /**
@@ -70,11 +64,8 @@ export default class SimplePhysics {
   clear() {
     this.particles.clear();
     this.springs.clear();
+    this.groups.clear();
     return this;
-  }
-
-  getParticle(particle) {
-    return this.returnIfConstrained(particle);
   }
 
   /**
@@ -117,10 +108,6 @@ export default class SimplePhysics {
     return this.behaviors.has(behavior);
   }
 
-  hasConstraint(constraint) {
-    return this.constraints.has(constraint);
-  }
-
   hasGroup(group) {
     return this.groups.has(group);
   }
@@ -142,13 +129,6 @@ export default class SimplePhysics {
    */
   removeBehavior(behavior) {
     return this.behaviors.delete(behavior);
-  }
-
-  /**
-   * Removes a constraint from the simulation.
-   */
-  removeConstraint(constraint) {
-    return this.constraints.delete(constraint);
   }
 
   /**
@@ -242,16 +222,6 @@ export default class SimplePhysics {
         group.update(deltaTime);
       }
     }
-  }
-
-  returnIfConstrained(particle) {
-    for (const constraint of this.constraints) {
-      if (particle.equalsWithTolerance(constraint, 0.1)) {
-        return constraint;
-      }
-    }
-
-    return this.returnIfDuplicate(particle);
   }
 
   returnIfDuplicate(particle) {
