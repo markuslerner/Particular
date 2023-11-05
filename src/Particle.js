@@ -116,6 +116,12 @@ export default class Particle extends Vector3 {
     }
   }
 
+  lock() {
+    this.clearVelocity();
+    this.locked = true;
+    return this;
+  }
+
   unlock() {
     this.clearVelocity();
     this.locked = false;
