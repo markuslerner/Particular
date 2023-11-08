@@ -15,6 +15,13 @@ Collaborations and improvements welcome.
 - Behavior-based
 - Vector3 API fully compatible with [THREE.js](https://github.com/mrdoob/three.js/) [Vector3](https://threejs.org/docs/#api/en/math/Vector3)
 
+### Examples
+
+- [All behaviors](https://dev.markuslerner.com/particular/examples/all-behaviors.html)
+- [Collision Starfield](https://dev.markuslerner.com/particular/examples/collision-starfield.html)
+- [Flocking](https://dev.markuslerner.com/particular/examples/flocking.html)
+- [Seek/Arrive](https://dev.markuslerner.com/particular/examples/seek-arrive.html)
+
 ### Usage
 
 ```console
@@ -68,13 +75,6 @@ Done.
 
 Collaborations and improvements are welcome.
 
-### Examples
-
-- [All behaviors](https://dev.markuslerner.com/particular/examples/all-behaviors.html)
-- [Collision Starfield](https://dev.markuslerner.com/particular/examples/collision-starfield.html)
-- [Flocking](https://dev.markuslerner.com/particular/examples/flocking.html)
-- [Seek/Arrive](https://dev.markuslerner.com/particular/examples/seek-arrive.html)
-
 ### Editing source code and examples
 
 To edit the source code and the examples, run:
@@ -103,38 +103,37 @@ The files from the src folder will we re-built automatically into a virtual buil
 
 **Members:**
 
-Member | Type | Default | Description
-:----- | :--- | :------ | :----------
-`behaviors` | Set | new Set() | Behaviors for all particles
-`constraints` | Set | new Set() | Constraints for all particles
-`groups` | Set | new Set() | Groups of particles (not implemented yet)
-`particles` | Set | new Set() | All particles
-`springs` | Set | new Set() | All springs (not implemented yet)
-`friction` | number | 0.95;
-`springIterationsCount` | number | 50;
+| Member                  | Type   |  Default  |  Description                              |
+| :---------------------- | :----- | :-------- | :---------------------------------------- |
+| `behaviors`             | Set    | new Set() | Behaviors for all particles               |
+| `constraints`           | Set    | new Set() |  Constraints for all particles            |
+| `groups`                | Set    | new Set() | Groups of particles (not implemented yet) |
+| `particles`             | Set    | new Set() | All particles                             |
+| `springs`               | Set    | new Set() | All springs (not implemented yet)         |
+| `friction`              | number | 0.95;     |
+| `springIterationsCount` | number | 50;       |
 
 **Public Methods:**
 
-Method | Return value | Description
-:----- | :----------- | :----------
-`addBehavior(behavior: Object)` | | Add behavior to all particles
-`addParticle(particle: Particle)` | | Add particle
-`addSpring(spring: Spring)` | | Not implmemented yet
-`addGroup(group: Group)` | | Not implmemented yet
-`clear()` | | Clear particles, groups and springs
-`getSpring(a: Particle, b: Particle)` | Spring | Attempts to find the spring element between the 2 particles supplied
-`getnumConnected(spring: Spring)` | number | Get the count of how many springs are connected to A
-`hasBehavior(behavior: Behavior)` | Behavior | Check, if physics has this behavior
-`hasGroup(group: Group)` | Group | Check, if physics has this group
-`hasParticle(particle: Particle)` | Particle | Check, if physics has this particle
-`hasSpring(spring: Spring)` | Spring | Check, if physics has this spring
-`removeBehavior(behavior: Behavior)` | boolean | Remove behavior
-`removeParticle(particle: Particle)` | boolean | Remove particle
-`removeSpring(spring: Spring)` | boolean | Remove spring
-`removeSpringElements(spring: Spring)` | boolean | Removes a spring connector and its both end point particles
-`removeGroup(group: Group)` | boolean | Remove group
-`update(deltaTime: number = 1)` | | Update simulation
-
+| Method                                 | Return value | Description                                                          |
+| :------------------------------------- | :----------- | :------------------------------------------------------------------- |
+| `addBehavior(behavior: Object)`        |              | Add behavior to all particles                                        |
+| `addParticle(particle: Particle)`      |              | Add particle                                                         |
+| `addSpring(spring: Spring)`            |              | Not implmemented yet                                                 |
+| `addGroup(group: Group)`               |              | Not implmemented yet                                                 |
+| `clear()`                              |              | Clear particles, groups and springs                                  |
+| `getSpring(a: Particle, b: Particle)`  | Spring       | Attempts to find the spring element between the 2 particles supplied |
+| `getnumConnected(spring: Spring)`      | number       | Get the count of how many springs are connected to A                 |
+| `hasBehavior(behavior: Behavior)`      | Behavior     | Check, if physics has this behavior                                  |
+| `hasGroup(group: Group)`               | Group        | Check, if physics has this group                                     |
+| `hasParticle(particle: Particle)`      | Particle     | Check, if physics has this particle                                  |
+| `hasSpring(spring: Spring)`            | Spring       | Check, if physics has this spring                                    |
+| `removeBehavior(behavior: Behavior)`   | boolean      | Remove behavior                                                      |
+| `removeParticle(particle: Particle)`   | boolean      | Remove particle                                                      |
+| `removeSpring(spring: Spring)`         | boolean      | Remove spring                                                        |
+| `removeSpringElements(spring: Spring)` | boolean      | Removes a spring connector and its both end point particles          |
+| `removeGroup(group: Group)`            | boolean      | Remove group                                                         |
+| `update(deltaTime: number = 1)`        |              |  Update simulation                                                   |
 
 #### Particle class
 
@@ -148,43 +147,41 @@ Vector3 API is fully compatible with [THREE.js](https://github.com/mrdoob/three.
 
 **Members:**
 
-Member | Type | Default | Description
-:----- | :--- | :------ | :----------
-`x` | number | 0.0
-`y` | number | 0.0
-`z` | number | 0.0
-`locked` | boolean | false | Particle lock status
-`behaviors` | Set | null | Particle behaviors
-`neighbors` | Set | null | Particle neighbors
-`mass` | number | 1.0
-`radius` | number | 1.0
-`friction` | number | 0.0
-`maxSpeed` | number | 3.0
-`force` | Vector3 | new Vector3()
-`velocity` | Vector3 | new Vector3()
-`velocitySmooth` | Vector3 | new Vector3()
-`followers` | Set | new Set() | Follower which will copy this particle’s position
+| Member           | Type     |  Default       |  Description                                      |
+| :--------------- | :------- | :------------- | :------------------------------------------------ |
+| `x`              | number   | 0.0            |
+| `y`              | number   | 0.0            |
+| `z`              | number   | 0.0            |
+| `locked`         | boolean  | false          | Particle lock status                              |
+| `behaviors`      | Set      | null           | Particle behaviors                                |
+| `neighbors`      | Set      | null           | Particle neighbors                                |
+| `mass`           |  number  |  1.0           |
+| `radius`         |  number  |  1.0           |
+| `friction`       |  number  |  0.0           |
+| `maxSpeed`       |  number  |  3.0           |
+| `force`          |  Vector3 |  new Vector3() |
+| `velocity`       | Vector3  | new Vector3()  |
+| `velocitySmooth` | Vector3  | new Vector3()  |
+| `followers`      | Set      | new Set()      | Follower which will copy this particle’s position |
 
 **Public Methods:**
 
-Method | Return value | Description
-:----- | :----------- | :----------
-`addBehavior(behavior: Object, addEvenIfExists: boolean = false)` | this | Add behavior to this particle only
-`getBehavior(behaviorClass: Class)` | Instance of Behavior | Get behavior by behavior class
-`addFollower(vector: Vector3)` | | Will copy this particle’s position
-`addForce(force: Vector3)` | this | Add force to this particle, used by behaviors
-`clearForce()` | this | Clear force
-`clearVelocity()` | this | Clear velocity
-`getVelocity()` | Vector3 | Get velocity
-`lock()` | this | Lock this particle’s position
-`removeBehavior(behavior: Object)` | boolean | Remove behavior, returns true, if behavior was found
-`removeFollower(follower: Object)` | boolean | Remove follower, returns true, if follower was found
-`unlock()` | this | Unlock this particle’s position
-`constrainX(min: number, max: number)` | | Constrain x
-`constrainY(min: number, max: number)` | | Constrain y
-`constrainZ(min: number, max: number)` | | Constrain z
-
-
+| Method                                                            | Return value         | Description                                           |
+| :---------------------------------------------------------------- | :------------------- | :---------------------------------------------------- |
+| `addBehavior(behavior: Object, addEvenIfExists: boolean = false)` | this                 | Add behavior to this particle only                    |
+| `getBehavior(behaviorClass: Class)`                               | Instance of Behavior | Get behavior by behavior class                        |
+| `addFollower(vector: Vector3)`                                    |                      | Will copy this particle’s position                    |
+| `addForce(force: Vector3)`                                        | this                 | Add force to this particle, used by behaviors         |
+| `clearForce()`                                                    | this                 | Clear force                                           |
+| `clearVelocity()`                                                 | this                 | Clear velocity                                        |
+| `getVelocity()`                                                   | Vector3              | Get velocity                                          |
+| `lock()`                                                          | this                 | Lock this particle’s position                         |
+| `removeBehavior(behavior: Object)`                                | boolean              |  Remove behavior, returns true, if behavior was found |
+| `removeFollower(follower: Object)`                                | boolean              |  Remove follower, returns true, if follower was found |
+| `unlock()`                                                        | this                 | Unlock this particle’s position                       |
+| `constrainX(min: number, max: number)`                            |                      | Constrain x                                           |
+| `constrainY(min: number, max: number)`                            |                      | Constrain y                                           |
+| `constrainZ(min: number, max: number)`                            |                      | Constrain z                                           |
 
 ### Available Behaviors:
 
